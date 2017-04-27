@@ -19,6 +19,9 @@ public class router {
     // an Array List where each index stores an Array List which contains IP address, port number and direct cost of known routers
 	private static ArrayList<ArrayList<String>> neighborTable;
 
+	private static HashMap<String, HashMap<String,Integer>> distanceVector;
+
+
 	public static void main(String[] args){
 		 
 		if(args.length<2){
@@ -49,6 +52,7 @@ public class router {
 	}
 
 	public router(String[] args){
+		distanceVector = new HashMap<String, HashMap<String, Integer>>();
 
         // assigning the first argument to global variable
         this.poisonedReverse = Integer.parseInt(args[0]);
@@ -107,6 +111,12 @@ public class router {
                 tempRouterInfo.add(tempIP);
                 tempRouterInfo.add(tempPort);
                 tempRouterInfo.add(tempCost);
+                String fromKey = ipAddress + " " + portNumber;
+                String toKey = tempIP + " " + tempPort;
+
+                HashMap<String, Integer> dv = new HashMap<String, Integer>();
+                dv.put(toKey, tempCost);
+                distanceVector.put(fromKey, dv);
 
                 // add arraylist to bigger arraylist
                 nodeArray.add(tempRouterInfo);
@@ -117,6 +127,14 @@ public class router {
         }
 
         return nodeArray;
+    }
+
+
+
+    public int cost(String fromIP, int fromPort, String toIP, int toPort)
+    {
+    	//distanceVector
+
     }
 	
 	
