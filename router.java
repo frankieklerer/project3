@@ -27,6 +27,24 @@ public class router {
         }
 
         router newRouter = new router(args);
+
+        //Creating an object of the accepting thread
+        acceptingDVThread acceptingThread = new acceptingDVThread();
+        //Starting the accepting thread
+        Thread athread = new Thread(acceptingThread);
+        athread.start();
+
+        //Creating an object of the Sending thread
+        sendingDVThread sendingThread = new sendingDVThread();
+        //Starting the sending thread
+        Thread sthread = new Thread(sendingThread);
+        sthread.start();
+
+        //Creating an object of the commanding thread
+        commandingThread commandThread = new commandingThread();
+        //Starting the command thread
+        Thread cthread = new Thread(commandThread);
+        cthread.start();
         
 	}
 
