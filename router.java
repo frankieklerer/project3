@@ -7,7 +7,7 @@ import java.io.FileReader;
 public class router {
 
     // every router has a globally unique IP address
-	private static int ipAddress;
+	private static String ipAddress;
 
     // every router has a globally unique port number
 	private static int portNumber;
@@ -67,7 +67,7 @@ public class router {
 
                     String firstStr = scan.nextLine();
                     String[] myInfo = firstStr.split(" ");
-                    this.ipAddress = Integer.parseInt(myInfo[0]);
+                    this.ipAddress = myInfo[0];
                     this.portNumber = Integer.parseInt(myInfo[1]);
 
                     // already read first line
