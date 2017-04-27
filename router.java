@@ -1,5 +1,6 @@
 import java.util.*;
-import java.io.FileReader;
+import java.io.*;
+import java.net.*;
 
 /**
 * The router class responsibe for updating 
@@ -19,6 +20,7 @@ public class router {
     // an Array List where each index stores an Array List which contains IP address, port number and direct cost of known routers
 	private static ArrayList<ArrayList<String>> neighborTable;
 
+    // a hashmap that maps the from IP/Port to another hashmap which maps the to IP/Port to the cost associated with the from to 
 	private static HashMap<String, HashMap<String,Integer>> distanceVector;
 
 
@@ -29,6 +31,7 @@ public class router {
             System.exit(1);
         }
 
+        // create new router method
         router newRouter = new router(args);
 
         //Creating an object of the accepting thread
@@ -36,14 +39,14 @@ public class router {
 
         //Starting the accepting thread
         Thread athread = new Thread(acceptingThread);
-        athread.start();
+       // athread.start();
 
         //Creating an object of the Sending thread
         sendingDVThread sendingThread = new sendingDVThread();
 
         //Starting the sending thread
         Thread sthread = new Thread(sendingThread);
-        sthread.start();
+        //sthread.start();
 
         //Creating an object of the commanding thread
         commandingThread commandThread = new commandingThread();
@@ -63,10 +66,41 @@ public class router {
         // initializing the global array list from the method
         this.neighborTable = this.readFile(args[1]);
 
-        System.out.println(this.neighborTable);
+        //System.out.println(this.neighborTable);
 
 	}
 
+    public void receiveCommands(){
+        try{
+
+            DatagramSocket serverSocket = new DatagramSocket(9875);
+            byte[] receiveData = new byte[1024];
+            byte[] sendData = new byte[1024];
+
+            while(true)
+            {
+                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                serverSocket.receive(receivePacket);
+                String sentence = new String(receivePacket.getData());
+                InetAddress IPAddress = receivePacket.getAddress();
+                int port = receivePacket.getPort();
+
+                System.out.println(this.distanceVector);
+                // sendData = this.distanceVector.getBytes();
+                // DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, port);
+                // serverSocket.send(sendPacket);
+            }
+        }
+        catch(IOException ioe)
+         {
+            //Your error Message here
+            System.out.println("expection yay");
+          }
+    }
+
+    public HashMap<String, HashMap<String,Integer>> getDV(){
+        return this.distanceVector;
+    }
  	
 
  	/**
@@ -118,7 +152,7 @@ public class router {
                 String toKey = tempIP + " " + tempPort;
 
                 HashMap<String, Integer> dv = new HashMap<String, Integer>();
-                dv.put(toKey, tempCost);
+                dv.put(toKey, Integer.parseInt(tempCost));
                 distanceVector.put(fromKey, dv);
 
                 // add arraylist to bigger arraylist
@@ -134,7 +168,7 @@ public class router {
 
 
 
-    public int cost(String fromIP, int fromPort, String toIP, int toPort)
+    public void cost(String fromIP, int fromPort, String toIP, int toPort)
     {
     	//distanceVector
 
