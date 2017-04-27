@@ -17,7 +17,7 @@ public class router {
 	private static int poisonedReverse;
 
     // an Array List where each index stores an Array List which contains IP address, port number and direct cost of known routers
-	private static ArrayList<ArrayList<String>> forwardingTable;
+	private static ArrayList<ArrayList<String>> neighborTable;
 
 	public static void main(String[] args){
 		 
@@ -27,6 +27,24 @@ public class router {
         }
 
         router newRouter = new router(args);
+
+        //Creating an object of the accepting thread
+        acceptingDVThread acceptingThread = new acceptingDVThread();
+        //Starting the accepting thread
+        Thread athread = new Thread(acceptingThread);
+        athread.start();
+
+        //Creating an object of the Sending thread
+        sendingDVThread sendingThread = new sendingDVThread();
+        //Starting the sending thread
+        Thread sthread = new Thread(sendingThread);
+        sthread.start();
+
+        //Creating an object of the commanding thread
+        commandingThread commandThread = new commandingThread();
+        //Starting the command thread
+        Thread cthread = new Thread(commandThread);
+        cthread.start();
         
 	}
 
@@ -36,9 +54,9 @@ public class router {
         this.poisonedReverse = Integer.parseInt(args[0]);
 
         // initializing the global array list from the method
-        this.forwardingTable = this.readFile(args[1]);
+        this.neighborTable = this.readFile(args[1]);
 
-        System.out.println(this.forwardingTable);
+        System.out.println(this.neighborTable);
 
 	}
 
