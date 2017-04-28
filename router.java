@@ -184,21 +184,29 @@ public class router {
     		String fromKey = fromNodes.get(i);
     		HashMap<String, Integer> toKeySet = distanceVector.get(fromKey);
 
-    		input += "from:" + fromKey;
+    		input = "from:" + fromKey;
 
     		Set<String> toNodeSet = toKeySet.keySet();
     		ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
 
+		for(String tonode: toNodeSet)
+    	{
+    		System.out.println("T)NODES:" + tonode);
+    	}
     		for(int j = 0; j < toNodes.size(); j++){
     			String toKey = toNodes.get(j);
+
     			int cost = toKeySet.get(toKey);
 
-    			input += "to:" + toKey + "(" + cost + ")";
+    			input = input + " to:" + toKey + "(" + cost + ")";
     		}
+
     	output.add(input);
     	}
 
     	return output;
+
+
     }
 
 
