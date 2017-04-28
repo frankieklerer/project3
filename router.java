@@ -203,8 +203,15 @@ public class router {
     	}
 
     	return output;
+    }
 
-
+    public void changeDVCost(String dstIP, String dstPort, int newWeight)
+    {
+    	String fromKey = ipAddress + " " + portNumber;
+    	HashMap<String, Integer> sourceDV = distanceVector.get(fromKey);
+    	String toKey = dstIP + " " + dstPort;
+    	sourceDV.put(toKey, newWeight);
+    	distanceVector.put(fromKey, sourceDV);
     }
 
 

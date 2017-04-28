@@ -23,7 +23,7 @@ public class commandingThread implements Runnable
 
 			while(scan.hasNextLine()){
 
-				String input = scan.next();
+				String input = scan.nextLine();
 
 				// print the current nodes distance vector and the distance vectors received from the neighbors
 				if(input.equals("PRINT")){
@@ -33,8 +33,23 @@ public class commandingThread implements Runnable
 					{
 						System.out.println(toPrintDV.get(i));
 					}
+				}
+				else{
+					String[] inputList = input.split(" ");
+					if(inputList[0].equals("CHANGE"))
+					{
+						String dstIP = inputList[1];
+						String dstPort = inputList[2];
+						int cost = Integer.parseInt(inputList[3]);
 
-					
+						instanceRouter.changeDVCost(dstIP, dstPort, cost);
+
+					}
+					else if(inputList[0].equals("MSG"))
+					{
+
+					}
+
 				}
 
 		}
