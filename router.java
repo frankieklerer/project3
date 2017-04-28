@@ -13,7 +13,7 @@ public class router {
 	private static String ipAddress;
 
     // every router has a globally unique port number
-	private static int portNumber;
+	private static String portNumber;
 
     // every router need to know whether they can use Poisoned Reverse or not
     // if 0 , router does not use PR. if 1, router does use PR.
@@ -134,7 +134,7 @@ public class router {
                     String firstStr = scan.nextLine();
                     String[] myInfo = firstStr.split(" ");
                     this.ipAddress = myInfo[0];
-                    this.portNumber = Integer.parseInt(myInfo[1]);
+                    this.portNumber = myInfo[1];
 
                     // already read first line
                     firstLine = false;
@@ -220,6 +220,15 @@ public class router {
     	//distanceVector
 
     }
+
+    public String getRouterIP()
+    {
+    	return ipAddress;
+    }
 	
+	public String getRouterPort()
+    {
+    	return portNumber;
+    }
 	
 }
