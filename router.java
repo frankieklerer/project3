@@ -212,6 +212,7 @@ public class router {
     	String toKey = dstIP + " " + dstPort;
     	sourceDV.put(toKey, newWeight);
     	distanceVector.put(fromKey, sourceDV);
+        System.out.println("new weight to neighbor " + dstIP + ":" + dstPort + " of " + newWeight);
     }
 
 

@@ -25,8 +25,11 @@ public class acceptingDVThread implements Runnable
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
 				String sentence = new String(receivePacket.getData());
-				//method that take sentence, parse DV, check dv alg, change if needed
+
+				//method that take sentence, parse DV, do dv alg, change instancerouter.dv if needed
 				//if change return boolean true, and send out new dv to neighbors
+
+
 				InetAddress IPAddress = receivePacket.getAddress();
 				int port = receivePacket.getPort();
 		//		sendData = sentence.getBytes();

@@ -9,7 +9,7 @@ public class sendingDVThread implements Runnable
 	router instanceRouter;
 	String ipAddress;
 	Integer portNumber;
-	long timerVar = 1234;
+	long timerVar = 5000; //5 seconds
 
 	public sendingDVThread(router r)
 	{
@@ -19,6 +19,7 @@ public class sendingDVThread implements Runnable
 	}
 	public void run() 
 	{
+
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask(){ @Override
             public void run() {
@@ -44,14 +45,18 @@ public class sendingDVThread implements Runnable
 				InetAddress IPAddress = InetAddress.getByName(neighborIP);
 				byte[] sendData = new byte[1024];
 				byte[] receiveData = new byte[1024];
-				ArrayList<String> distanceVector = instanceRouter.toStringDV();
-				//may have to make long string with like / as delimeter
-			//	sendData = distanceVector.getBytes();
+				ArrayList<String> distanceVectors = instanceRouter.toStringDV();
+				String data = "";
+				for(String tempRouterInfo : distanceVectors)
+				{
+					data = data + "tempRouterInfo//";
+				}
+				sendData = data.getBytes();
 				DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, neighborPort);
 				clientSocket.send(sendPacket);
-				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-				clientSocket.receive(receivePacket);
-				String modifiedSentence = new String(receivePacket.getData());
+				// DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+				// clientSocket.receive(receivePacket);
+				// String modifiedSentence = new String(receivePacket.getData());
 				
 				clientSocket.close();
 			}
