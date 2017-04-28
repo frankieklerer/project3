@@ -7,6 +7,8 @@ import java.net.*;
 **/
 public class router {
 
+	static router routerStatic; 
+
     // every router has a globally unique IP address
 	private static String ipAddress;
 
@@ -34,22 +36,24 @@ public class router {
         // create new router method
         router newRouter = new router(args);
 
+        routerStatic = newRouter;
+
         //Creating an object of the accepting thread
-        acceptingDVThread acceptingThread = new acceptingDVThread(router.class);
+        acceptingDVThread acceptingThread = new acceptingDVThread(routerStatic);
 
         //Starting the accepting thread
         Thread athread = new Thread(acceptingThread);
        // athread.start();
 
         //Creating an object of the Sending thread
-        sendingDVThread sendingThread = new sendingDVThread(router.class);
+        sendingDVThread sendingThread = new sendingDVThread(routerStatic);
 
         //Starting the sending thread
         Thread sthread = new Thread(sendingThread);
         //sthread.start();
 
         //Creating an object of the commanding thread
-        commandingThread commandThread = new commandingThread(router.class);
+        commandingThread commandThread = new commandingThread(routerStatic);
         
         //Starting the command thread
         Thread cthread = new Thread(commandThread);
@@ -65,6 +69,8 @@ public class router {
 
         // initializing the global array list from the method
         this.neighborTable = this.readFile(args[1]);
+
+    
 
         //System.out.println(this.neighborTable);
 
@@ -166,6 +172,34 @@ public class router {
         return nodeArray;
     }
 
+    public ArrayList<String> toStringDV()
+    {
+    	ArrayList<String> output = new ArrayList<String>();
+    	String input = "";
+
+    	Set<String> fromKeySet = distanceVector.keySet();
+    	ArrayList<String> fromNodes = new ArrayList<String>(fromKeySet);
+
+    	for(int i = 0; i < fromNodes.size(); i++){
+    		String fromKey = fromNodes.get(i);
+    		HashMap<String, Integer> toKeySet = distanceVector.get(fromKey);
+
+    		input += "from:" + fromKey;
+
+    		Set<String> toNodeSet = toKeySet.keySet();
+    		ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
+
+    		for(int j = 0; j < toNodes.size(); j++){
+    			String toKey = toNodes.get(j);
+    			int cost = toKeySet.get(toKey);
+
+    			input += "to:" + toKey + "(" + cost + ")";
+    		}
+    	output.add(input);
+    	}
+
+    	return output;
+    }
 
 
     public void cost(String fromIP, int fromPort, String toIP, int toPort)

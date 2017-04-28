@@ -4,9 +4,10 @@ import java.net.*;
 
 public class sendingDVThread implements Runnable
 {
+	router instanceRouter;
 	public sendingDVThread(router r)
 	{
-
+		instanceRouter = r;
 	}
 	public void run() 
 	{

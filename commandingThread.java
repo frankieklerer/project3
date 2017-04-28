@@ -4,15 +4,15 @@ import java.util.*;
 
 public class commandingThread implements Runnable
 {
+	router instanceRouter;
 
 	public commandingThread(router r)
 	{
-
+		instanceRouter = r;
 	}
 
 	public void run()
 	{
-		try{
 
 			Scanner scan = new Scanner(System.in);
 
@@ -27,33 +27,17 @@ public class commandingThread implements Runnable
 
 				// print the current nodes distance vector and the distance vectors received from the neighbors
 				if(input.equals("PRINT")){
-					//use router object to get info
+					ArrayList<String> toPrintDV = instanceRouter.toStringDV();
 
-					// DatagramSocket clientSocket = new DatagramSocket();
-					// InetAddress IPAddress = InetAddress.getByName("hostname");
-					// byte[] sendData = new byte[1024];
-					// byte[] receiveData = new byte[1024];
-					// sendData = input.getBytes();
-					// DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, 9875);
-					// clientSocket.send(sendPacket);
+					for(int i = 0; i < toPrintDV.size(); i++)
+					{
+						System.out.println(toPrintDV.get(i));
+					}
 
-					// System.out.println("sent to clientSocket");
-
-
-					// // DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-					// // clientSocket.receive(receivePacket);
-					// // String distanceVector = new String(receivePacket.getData());
-					// // System.out.println("FROM ROUTER:" +	distanceVector);
-					// clientSocket.close();
-
+					
 				}
 
-			}
 		}
-		catch(IOException ioe)
-		 {
-		    //Your error Message here
-		    System.out.println("expection yay");
-		  }
+		
 	}
 }
