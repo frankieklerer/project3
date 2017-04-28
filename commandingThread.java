@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+
 public class commandingThread implements Runnable
 {
 	router instanceRouter;
@@ -47,7 +48,10 @@ public class commandingThread implements Runnable
 					}
 					else if(inputList[0].equals("MSG"))
 					{
-
+						String dstIP = inputList[1];
+						String dstPort = inputList[2];
+						String message = inputList[3];
+						//send message?
 					}
 
 				}

@@ -230,5 +230,10 @@ public class router {
     {
     	return portNumber;
     }
+
+    public ArrayList<ArrayList<String>> getNeighborTable()
+    {
+    	return neighborTable;
+    }
 	
 }
