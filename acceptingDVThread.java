@@ -3,6 +3,10 @@ import java.net.*;
 
 public class acceptingDVThread implements Runnable
 {
+	public acceptingDVThread(router r)
+	{
+
+	}
 	public void run()
 	{
 		try{

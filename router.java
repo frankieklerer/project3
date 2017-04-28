@@ -35,21 +35,21 @@ public class router {
         router newRouter = new router(args);
 
         //Creating an object of the accepting thread
-        acceptingDVThread acceptingThread = new acceptingDVThread();
+        acceptingDVThread acceptingThread = new acceptingDVThread(router.class);
 
         //Starting the accepting thread
         Thread athread = new Thread(acceptingThread);
        // athread.start();
 
         //Creating an object of the Sending thread
-        sendingDVThread sendingThread = new sendingDVThread();
+        sendingDVThread sendingThread = new sendingDVThread(router.class);
 
         //Starting the sending thread
         Thread sthread = new Thread(sendingThread);
         //sthread.start();
 
         //Creating an object of the commanding thread
-        commandingThread commandThread = new commandingThread();
+        commandingThread commandThread = new commandingThread(router.class);
         
         //Starting the command thread
         Thread cthread = new Thread(commandThread);
@@ -70,33 +70,33 @@ public class router {
 
 	}
 
-    public void receiveCommands(){
-        try{
+    // public void receiveCommands(){
+    //     try{
 
-            DatagramSocket serverSocket = new DatagramSocket(9875);
-            byte[] receiveData = new byte[1024];
-            byte[] sendData = new byte[1024];
+    //         DatagramSocket serverSocket = new DatagramSocket(9875);
+    //         byte[] receiveData = new byte[1024];
+    //         byte[] sendData = new byte[1024];
 
-            while(true)
-            {
-                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                serverSocket.receive(receivePacket);
-                String sentence = new String(receivePacket.getData());
-                InetAddress IPAddress = receivePacket.getAddress();
-                int port = receivePacket.getPort();
+    //         while(true)
+    //         {
+    //             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+    //             serverSocket.receive(receivePacket);
+    //             String sentence = new String(receivePacket.getData());
+    //             InetAddress IPAddress = receivePacket.getAddress();
+    //             int port = receivePacket.getPort();
 
-                System.out.println(this.distanceVector);
-                // sendData = this.distanceVector.getBytes();
-                // DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, port);
-                // serverSocket.send(sendPacket);
-            }
-        }
-        catch(IOException ioe)
-         {
-            //Your error Message here
-            System.out.println("expection yay");
-          }
-    }
+    //             System.out.println(this.distanceVector);
+    //             // sendData = this.distanceVector.getBytes();
+    //             // DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, port);
+    //             // serverSocket.send(sendPacket);
+    //         }
+    //     }
+    //     catch(IOException ioe)
+    //      {
+    //         //Your error Message here
+    //         System.out.println("expection yay");
+    //       }
+    // }
 
     public HashMap<String, HashMap<String,Integer>> getDV(){
         return this.distanceVector;

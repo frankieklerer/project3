@@ -4,6 +4,10 @@ import java.net.*;
 
 public class sendingDVThread implements Runnable
 {
+	public sendingDVThread(router r)
+	{
+
+	}
 	public void run() 
 	{
 		// try{

@@ -4,6 +4,12 @@ import java.util.*;
 
 public class commandingThread implements Runnable
 {
+
+	public commandingThread(router r)
+	{
+
+	}
+
 	public void run()
 	{
 		try{
@@ -21,23 +27,24 @@ public class commandingThread implements Runnable
 
 				// print the current nodes distance vector and the distance vectors received from the neighbors
 				if(input.equals("PRINT")){
+					//use router object to get info
 
-					DatagramSocket clientSocket = new DatagramSocket();
-					InetAddress IPAddress = InetAddress.getByName("hostname");
-					byte[] sendData = new byte[1024];
-					byte[] receiveData = new byte[1024];
-					sendData = input.getBytes();
-					DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, 9875);
-					clientSocket.send(sendPacket);
+					// DatagramSocket clientSocket = new DatagramSocket();
+					// InetAddress IPAddress = InetAddress.getByName("hostname");
+					// byte[] sendData = new byte[1024];
+					// byte[] receiveData = new byte[1024];
+					// sendData = input.getBytes();
+					// DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, 9875);
+					// clientSocket.send(sendPacket);
 
-					System.out.println("sent to clientSocket");
+					// System.out.println("sent to clientSocket");
 
 
-					// DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-					// clientSocket.receive(receivePacket);
-					// String distanceVector = new String(receivePacket.getData());
-					// System.out.println("FROM ROUTER:" +	distanceVector);
-					clientSocket.close();
+					// // DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+					// // clientSocket.receive(receivePacket);
+					// // String distanceVector = new String(receivePacket.getData());
+					// // System.out.println("FROM ROUTER:" +	distanceVector);
+					// clientSocket.close();
 
 				}
 
