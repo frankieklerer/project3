@@ -116,6 +116,7 @@ public class router {
 
         // temporary array list
         ArrayList<ArrayList<String>> nodeArray = new ArrayList<ArrayList<String>>();
+        HashMap<String, Integer> dv = new HashMap<String, Integer>();
 
         // tells the reader if its the first nline of the text file or not
         boolean firstLine = true;
@@ -154,12 +155,11 @@ public class router {
                 tempRouterInfo.add(tempIP);
                 tempRouterInfo.add(tempPort);
                 tempRouterInfo.add(tempCost);
-                String fromKey = ipAddress + " " + portNumber;
+               
                 String toKey = tempIP + " " + tempPort;
 
-                HashMap<String, Integer> dv = new HashMap<String, Integer>();
                 dv.put(toKey, Integer.parseInt(tempCost));
-                distanceVector.put(fromKey, dv);
+                
 
                 // add arraylist to bigger arraylist
                 nodeArray.add(tempRouterInfo);
@@ -168,7 +168,9 @@ public class router {
         }catch(Exception e){
             System.out.println("Could not open file " + e);
         }
-
+        
+        String fromKey = ipAddress + " " + portNumber;
+        distanceVector.put(fromKey, dv);
         return nodeArray;
     }
 
@@ -189,10 +191,6 @@ public class router {
     		Set<String> toNodeSet = toKeySet.keySet();
     		ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
 
-		for(String tonode: toNodeSet)
-    	{
-    		System.out.println("T)NODES:" + tonode);
-    	}
     		for(int j = 0; j < toNodes.size(); j++){
     			String toKey = toNodes.get(j);
 
