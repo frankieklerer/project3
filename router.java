@@ -205,16 +205,67 @@ public class router {
     	return output;
     }
 
-    public void changeDVCost(String dstIP, String dstPort, int newWeight)
-    {
-    	String fromKey = ipAddress + " " + portNumber;
+    public boolean changeDVCost(String dstIP, String dstPort, int newWeight)
+    {   
+        boolean change = false;
+    	String fromKey = ipAddress + ":" + portNumber;
     	HashMap<String, Integer> sourceDV = distanceVector.get(fromKey);
-    	String toKey = dstIP + " " + dstPort;
+    	String toKey = dstIP + ":" + dstPort;
+        Integer currentWeight = sourceDV.get(toKey);
+        if(currentWeight != newWeight)
+        {
+            change = true;
+        }
     	sourceDV.put(toKey, newWeight);
     	distanceVector.put(fromKey, sourceDV);
         System.out.println("new weight to neighbor " + dstIP + ":" + dstPort + " of " + newWeight);
+        return change;
     }
 
+     public boolean checkDVforChanges(String fromKey, String toKey, int newWeight)
+    {   
+        boolean changes = false;
+        String routerCurrentKey = ipAddress + ":" + portNumber;
+    
+        if(toKey.equals(routerCurrentKey))
+        {
+            return false;
+        }
+
+        HashMap<String, Integer> currentRouterDV = distanceVector.get(routerCurrentKey);
+        int costToNode = currentRouterDV.get(fromKey);
+        int totalNewWeight = newWeight + costToNode;
+        if(currentRouterDV.containsKey(toKey))
+        {
+            if(totalNewWeight < currentRouterDV.get(toKey))
+            {
+                currentRouterDV.put(toKey, totalNewWeight);
+                changes = true;
+            }
+        }
+        else
+        {
+            currentRouterDV.put(toKey, totalNewWeight);
+            changes = true;
+        }
+    
+
+        if(distanceVector.containsKey(fromKey))
+        {
+            HashMap<String, Integer> tempFromRouter = distanceVector.get(fromKey);
+            tempFromRouter.put(toKey, newWeight);
+            distanceVector.put(fromKey, tempFromRouter);
+        }
+        else
+        {
+            HashMap<String, Integer> toInsert = new HashMap<String, Integer>();
+            toInsert.put(toKey, newWeight);
+            distanceVector.put(fromKey, toInsert);
+        }
+
+        return changes;
+        
+    }
 
     public void cost(String fromIP, int fromPort, String toIP, int toPort)
     {

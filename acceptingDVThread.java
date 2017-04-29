@@ -57,7 +57,29 @@ public class acceptingDVThread implements Runnable
 		}
 		else if(packetType.equals("DVU"))
 		{
+			for(String tempNode: data)
+			{
+				String[] fromtosplitting = tempNode.split(" ");
+				String[] fromNode = fromtosplitting[0].split(":");
+				String fromKey = fromNode[1] + ":" + fromNode[2];
+
+				for(int i = 1; i < fromtosplitting.length; i++)
+				{
+					String[] tempToNode = fromtosplitting[i].split(":");
+					String toKey = tempToNode[1] + ":" + tempToNode[2];
+					int cost = (int)Integer.parseInt(tempToNode[3]);
+
+					boolean dvChange = instanceRouter.checkDVforChanges(fromKey, toKey, cost);
+					
+					//if true, send dv update to neighbors
+				}
+			}
 			
+
+		}
+		else if(packetType.equals("WU"))
+		{
+
 		}
 	}
 }

@@ -20,7 +20,11 @@ public class sendingDVThread implements Runnable
 	public void run() 
 	{
 
+		sendDVUpdate();
+		System.out.println("initial DV sent");
+		
 		Timer timer = new Timer();
+
 		timer.schedule(new TimerTask(){ @Override
             public void run() {
                 sendDVUpdate();

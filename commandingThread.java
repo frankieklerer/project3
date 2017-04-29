@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.lang.*;
 
 
 public class commandingThread implements Runnable
@@ -43,15 +44,47 @@ public class commandingThread implements Runnable
 						String dstPort = inputList[2];
 						int cost = Integer.parseInt(inputList[3]);
 
-						instanceRouter.changeDVCost(dstIP, dstPort, cost);
+						boolean change = instanceRouter.changeDVCost(dstIP, dstPort, cost);
+						String updateData = dstIP + ":" + dstPort + ":" + cost;
 
-						//run DV alg
+						if(change)
+						{
+							ArrayList<ArrayList<String>> neighborTable = instanceRouter.getNeighborTable();
+
+							for(ArrayList<String> neighborRouterInfo: neighborTable)
+							{
+								String neighborIP = neighborRouterInfo.get(0);
+								Integer neighborPort = Integer.parseInt(neighborRouterInfo.get(1));
+
+								try{
+									DatagramSocket clientSocket = new DatagramSocket();
+									InetAddress IPAddress = InetAddress.getByName(neighborIP);
+									byte[] sendData = new byte[1024];
+									byte[] receiveData = new byte[1024];
+									String data = "WU//";
+									data = data + updateData;
+									sendData = data.getBytes();
+									DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, neighborPort);
+									clientSocket.send(sendPacket);
+									// DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+									// clientSocket.receive(receivePacket);
+									// String modifiedSentence = new String(receivePacket.getData());
+									
+									clientSocket.close();
+								}
+								catch(IOException ioe)
+								{
+								    //Your error Message here
+								    System.out.println("expection yay");
+							    }
+							}
+						}
 
 					}
 					else if(inputList[0].equals("MSG"))
 					{
 						String dstIP = inputList[1];
-						String dstPort = inputList[2];
+						Integer dstPort = Integer.parseInt(inputList[2]);
 						String message = inputList[3];
 						//send message?
 						try{
