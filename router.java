@@ -7,6 +7,7 @@ import java.net.*;
 **/
 public class router {
 
+    // static version of router version
 	static router routerStatic; 
 
     // every router has a globally unique IP address
@@ -62,15 +63,15 @@ public class router {
 	}
 
 	public router(String[] args){
-		distanceVector = new HashMap<String, HashMap<String, Integer>>();
+
+        // initializes distance vector
+		this.distanceVector = new HashMap<String, HashMap<String, Integer>>();
 
         // assigning the first argument to global variable
         this.poisonedReverse = Integer.parseInt(args[0]);
 
         // initializing the global array list from the method
         this.neighborTable = this.readFile(args[1]);
-
-    
 
         //System.out.println(this.neighborTable);
 
@@ -104,12 +105,74 @@ public class router {
     //       }
     // }
 
-    public HashMap<String, HashMap<String,Integer>> getDV(){
-        return this.distanceVector;
-    }
- 	
+	// method that updates the cost between two nodes
+	 public boolean changeDVCost(String dstIP, String dstPort, int newWeight){   
+	        boolean change = false;
+	        String fromKey = ipAddress + ":" + portNumber;
+	        HashMap<String, Integer> sourceDV = distanceVector.get(fromKey);
+	        String toKey = dstIP + ":" + dstPort;
 
- 	/**
+	        Integer currentWeight = sourceDV.get(toKey);
+	        if(currentWeight != newWeight) {
+	      	  change = true;
+	        }
+	        sourceDV.put(toKey, newWeight);
+	        distanceVector.put(fromKey, sourceDV);
+	        System.out.println("new weight to neighbor " + dstIP + ":" + dstPort + " of " + newWeight);
+	        return change;
+   }
+
+   // method that changes a current routers distance vector after receiving a neighboyrs distance vector
+   public boolean checkDVforChanges(String fromKey, String toKey, int newWeight){   
+      boolean changes = false;
+      String routerCurrentKey = ipAddress + ":" + portNumber;
+  
+  		// do not change anything is the from key is equal to the from key
+      if(toKey.equals(routerCurrentKey)){
+          return false;
+      }
+
+      // get the routers distance vector
+      HashMap<String, Integer> currentRouterDV = distanceVector.get(routerCurrentKey);
+      int costToNode = currentRouterDV.get(fromKey);
+
+      // possible new weight
+      int totalNewWeight = newWeight + costToNode;
+
+      // if the router already contains the node in their distance vector, check if they can updae the cost
+      if(currentRouterDV.containsKey(toKey)){
+
+      		// if the posssible new cost is less than the current cost
+          if(totalNewWeight < currentRouterDV.get(toKey)){
+
+          	// update the cost
+            currentRouterDV.put(toKey, totalNewWeight);
+            changes = true;
+          }
+
+      // if the router odes not contain the node in its distance vector (not a neighbor)
+      }else{
+          currentRouterDV.put(toKey, totalNewWeight);
+          changes = true;
+      }
+  
+      // update the routers entire distance vector 
+      if(distanceVector.containsKey(fromKey)){
+          HashMap<String, Integer> tempFromRouter = distanceVector.get(fromKey);
+          tempFromRouter.put(toKey, newWeight);
+          distanceVector.put(fromKey, tempFromRouter);
+      } else {
+          HashMap<String, Integer> toInsert = new HashMap<String, Integer>();
+          toInsert.put(toKey, newWeight);
+          distanceVector.put(fromKey, toInsert);
+      }
+
+      return changes;
+      
+  }
+	
+
+ 		/**
     * Method that reads in the neighbors.txt file for each router
     **/
     public ArrayList<ArrayList<String>> readFile(String fileName){
@@ -174,118 +237,58 @@ public class router {
         return nodeArray;
     }
 
-    public ArrayList<String> toStringDV()
-    {
-    	ArrayList<String> output = new ArrayList<String>();
-    	String input = "";
+  // method that turns the routers distance vector into a readable form
+  public ArrayList<String> toStringDV(){
+		ArrayList<String> output = new ArrayList<String>();
+		String input = "";
 
-    	Set<String> fromKeySet = distanceVector.keySet();
-    	ArrayList<String> fromNodes = new ArrayList<String>(fromKeySet);
+		Set<String> fromKeySet = distanceVector.keySet();
+		ArrayList<String> fromNodes = new ArrayList<String>(fromKeySet);
 
-    	for(int i = 0; i < fromNodes.size(); i++){
-    		String fromKey = fromNodes.get(i);
-    		HashMap<String, Integer> toKeySet = distanceVector.get(fromKey);
+		for(int i = 0; i < fromNodes.size(); i++){
+			String fromKey = fromNodes.get(i);
+			HashMap<String, Integer> toKeySet = distanceVector.get(fromKey);
 
-    		input = "from:" + fromKey;
+			input = "from:" + fromKey;
 
-    		Set<String> toNodeSet = toKeySet.keySet();
-    		ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
+			Set<String> toNodeSet = toKeySet.keySet();
+			ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
 
-    		for(int j = 0; j < toNodes.size(); j++){
-    			String toKey = toNodes.get(j);
+			for(int j = 0; j < toNodes.size(); j++){
+				String toKey = toNodes.get(j);
+				int cost = toKeySet.get(toKey);
+				input = input + " to:" + toKey + ":" + cost;
+			}
+		output.add(input);
+		}
+		return output;
+	}
 
-    			int cost = toKeySet.get(toKey);
+   
+   // returns current cost from one node to another
+  public void cost(String fromIP, int fromPort, String toIP, int toPort){
+  	//distanceVector
 
-    			input = input + " to:" + toKey + ":" + cost;
-    		}
+  }
 
-    	output.add(input);
-    	}
+  // returns routers hashmpa
+  public HashMap<String, HashMap<String,Integer>> getDV(){
+        return this.distanceVector;
+  }
 
-    	return output;
-    }
+  // returns routers IP address
+  public String getRouterIP(){
+  	return this.ipAddress;
+  }
 
-    public boolean changeDVCost(String dstIP, String dstPort, int newWeight)
-    {   
-        boolean change = false;
-    	String fromKey = ipAddress + ":" + portNumber;
-    	HashMap<String, Integer> sourceDV = distanceVector.get(fromKey);
-    	String toKey = dstIP + ":" + dstPort;
-        Integer currentWeight = sourceDV.get(toKey);
-        if(currentWeight != newWeight)
-        {
-            change = true;
-        }
-    	sourceDV.put(toKey, newWeight);
-    	distanceVector.put(fromKey, sourceDV);
-        System.out.println("new weight to neighbor " + dstIP + ":" + dstPort + " of " + newWeight);
-        return change;
-    }
+  // returns routers port number
+	public String getRouterPort(){
+  	return this.portNumber;
+  }
 
-     public boolean checkDVforChanges(String fromKey, String toKey, int newWeight)
-    {   
-        boolean changes = false;
-        String routerCurrentKey = ipAddress + ":" + portNumber;
-    
-        if(toKey.equals(routerCurrentKey))
-        {
-            return false;
-        }
-
-        HashMap<String, Integer> currentRouterDV = distanceVector.get(routerCurrentKey);
-        int costToNode = currentRouterDV.get(fromKey);
-        int totalNewWeight = newWeight + costToNode;
-        if(currentRouterDV.containsKey(toKey))
-        {
-            if(totalNewWeight < currentRouterDV.get(toKey))
-            {
-                currentRouterDV.put(toKey, totalNewWeight);
-                changes = true;
-            }
-        }
-        else
-        {
-            currentRouterDV.put(toKey, totalNewWeight);
-            changes = true;
-        }
-    
-
-        if(distanceVector.containsKey(fromKey))
-        {
-            HashMap<String, Integer> tempFromRouter = distanceVector.get(fromKey);
-            tempFromRouter.put(toKey, newWeight);
-            distanceVector.put(fromKey, tempFromRouter);
-        }
-        else
-        {
-            HashMap<String, Integer> toInsert = new HashMap<String, Integer>();
-            toInsert.put(toKey, newWeight);
-            distanceVector.put(fromKey, toInsert);
-        }
-
-        return changes;
-        
-    }
-
-    public void cost(String fromIP, int fromPort, String toIP, int toPort)
-    {
-    	//distanceVector
-
-    }
-
-    public String getRouterIP()
-    {
-    	return ipAddress;
-    }
-	
-	public String getRouterPort()
-    {
-    	return portNumber;
-    }
-
-    public ArrayList<ArrayList<String>> getNeighborTable()
-    {
-    	return neighborTable;
-    }
+  // returns routers neighbor table
+  public ArrayList<ArrayList<String>> getNeighborTable(){
+  	return this,neighborTable;
+  }
 	
 }
