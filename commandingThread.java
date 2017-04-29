@@ -45,6 +45,8 @@ public class commandingThread implements Runnable
 
 						instanceRouter.changeDVCost(dstIP, dstPort, cost);
 
+						//run DV alg
+
 					}
 					else if(inputList[0].equals("MSG"))
 					{
@@ -52,9 +54,29 @@ public class commandingThread implements Runnable
 						String dstPort = inputList[2];
 						String message = inputList[3];
 						//send message?
+						try{
+							DatagramSocket clientSocket = new DatagramSocket();
+							InetAddress IPAddress = InetAddress.getByName(dstIP);
+							byte[] sendData = new byte[1024];
+							byte[] receiveData = new byte[1024];
+							String data = "MSG//" + message;
+							sendData = data.getBytes();
+							DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, dstPort);
+							clientSocket.send(sendPacket);
+							// DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+							// clientSocket.receive(receivePacket);
+							// String modifiedSentence = new String(receivePacket.getData());
+							
+							clientSocket.close();
+							}
+						catch(IOException ioe)
+						{
+						    //Your error Message here
+						    System.out.println("expection yay");
+					    }
 					}
 
-				}
+			}
 
 		}
 		

@@ -156,7 +156,7 @@ public class router {
                 tempRouterInfo.add(tempPort);
                 tempRouterInfo.add(tempCost);
                
-                String toKey = tempIP + " " + tempPort;
+                String toKey = tempIP + ":" + tempPort;
 
                 dv.put(toKey, Integer.parseInt(tempCost));
                 
@@ -169,7 +169,7 @@ public class router {
             System.out.println("Could not open file " + e);
         }
         
-        String fromKey = ipAddress + " " + portNumber;
+        String fromKey = ipAddress + ":" + portNumber;
         distanceVector.put(fromKey, dv);
         return nodeArray;
     }
@@ -196,7 +196,7 @@ public class router {
 
     			int cost = toKeySet.get(toKey);
 
-    			input = input + " to:" + toKey + "(" + cost + ")";
+    			input = input + " to:" + toKey + ":" + cost;
     		}
 
     	output.add(input);

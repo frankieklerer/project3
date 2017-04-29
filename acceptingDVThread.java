@@ -26,6 +26,7 @@ public class acceptingDVThread implements Runnable
 				serverSocket.receive(receivePacket);
 				String sentence = new String(receivePacket.getData());
 
+				parsePacket(sentence);
 				//method that take sentence, parse DV, do dv alg, change instancerouter.dv if needed
 				//if change return boolean true, and send out new dv to neighbors
 
@@ -45,4 +46,32 @@ public class acceptingDVThread implements Runnable
 		    System.out.println("expection yay");
 		  }
 		}
+
+	public void parsePacket(String sentence)
+	{
+		String[] data = sentence.split("//");
+		String packetType = data[0];
+		if(packetType.equals("MSG"))
+		{
+
+		}
+		else if(packetType.equals("DVU"))
+		{
+			
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

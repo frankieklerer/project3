@@ -46,10 +46,10 @@ public class sendingDVThread implements Runnable
 				byte[] sendData = new byte[1024];
 				byte[] receiveData = new byte[1024];
 				ArrayList<String> distanceVectors = instanceRouter.toStringDV();
-				String data = "";
+				String data = "DVU//";
 				for(String tempRouterInfo : distanceVectors)
 				{
-					data = data + "tempRouterInfo//";
+					data = data + tempRouterInfo + "//";
 				}
 				sendData = data.getBytes();
 				DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, neighborPort);
@@ -66,7 +66,5 @@ public class sendingDVThread implements Runnable
 			    System.out.println("expection yay");
 		    }
 		}
-
-		
 	}
 }
