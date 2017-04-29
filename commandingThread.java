@@ -68,7 +68,8 @@ public class commandingThread implements Runnable{
 
 					// ask router if this weight change will cause a change in distance vector
 					boolean change = instanceRouter.changeDVCost(dstIP, dstPort, cost);
-					String updateData = dstIP + ":" + dstPort + ":" + cost;
+					String dstData = dstIP + ":" + dstPort + ":" + cost;
+					String srcData = ipAddress + ":" + portNumber + ":";
 
 					// if the change will affect the routers distance vector
 					if(change){
@@ -88,14 +89,15 @@ public class commandingThread implements Runnable{
 								byte[] sendData = new byte[1024];
 								byte[] receiveData = new byte[1024];
 								String data = "WU//";
-								data = data + updateData;
+								data = data + srcData + dstData;
 								sendData = data.getBytes();
 								DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, neighborPort);
 								clientSocket.send(sendPacket);
-								// DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-								// clientSocket.receive(receivePacket);
-								// String modifiedSentence = new String(receivePacket.getData());
-								
+								DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+								clientSocket.receive(receivePacket);
+								String sentence = new String(receivePacket.getData());
+								parsePacket(sentence);
+
 								clientSocket.close();
 							}
 							catch(IOException ioe)
@@ -105,6 +107,7 @@ public class commandingThread implements Runnable{
 						    }
 						}
 					}
+
 
 				//MSG <dst-ip> <dst-port> <msg> - send message msg to a destination with the specified address.
 				}else if(inputList[0].equals("MSG")){
@@ -123,10 +126,11 @@ public class commandingThread implements Runnable{
 						sendData = data.getBytes();
 						DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, dstPort);
 						clientSocket.send(sendPacket);
-						// DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-						// clientSocket.receive(receivePacket);
-						// String modifiedSentence = new String(receivePacket.getData());
-						
+						DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+						clientSocket.receive(receivePacket);
+						String sentence = new String(receivePacket.getData());
+						parsePacket(sentence);
+
 						clientSocket.close();
 						}
 					catch(IOException ioe)
@@ -135,10 +139,49 @@ public class commandingThread implements Runnable{
 					    System.out.println("expection yay");
 				    }
 				}
-
 			}
 
 		}
 		
+	}
+
+	// method to parse packet receive to analyze message in morder to determine how to nperform necessary oprtations
+	public void parsePacket(String sentence){
+
+		boolean changes = false;
+		// split message up
+		String[] data = sentence.split("//");
+		String packetType = data[0];
+
+		if(packetType.equals("DVU")){
+
+			System.out.println("Router " + this.ipAddress + " has received a distance vector update.");
+
+			// syntax is "from:ip:port to:ip:port:cost ..."
+
+			// for every node in the update
+			for(String temp: data){
+
+				// split each message by node
+				String[] splitNodes = temp.split(" ");
+
+				// from node is the first node, extract its information
+				String[] fromNode = splitNodes[0].split(":");
+				String fromKey = fromNode[1] + ":" + fromNode[2];
+				System.out.println("DV update from " + fromKey);
+
+				// split each node by ip address, port, cost
+				for(int i = 1; i < splitNodes.length; i++){
+
+					String[] toNode = splitNodes[i].split(":");
+					String toKey = toNode[1] + ":" + toNode[2];
+					int cost = (int)Integer.parseInt(toNode[3]);
+
+					// check if THIS router has made any changes to its DV update as a result of the received DV update
+					// if true, must send its DV update to neighbors
+					changes = instanceRouter.checkDVforChanges(fromKey, toKey, cost);
+				}
+			}
+		}
 	}
 }

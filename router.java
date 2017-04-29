@@ -44,14 +44,14 @@ public class router {
 
         //Starting the accepting thread
         Thread athread = new Thread(acceptingThread);
-       // athread.start();
+        athread.start();
 
         //Creating an object of the Sending thread
         sendingDVThread sendingThread = new sendingDVThread(routerStatic);
 
         //Starting the sending thread
         Thread sthread = new Thread(sendingThread);
-        //sthread.start();
+        sthread.start();
 
         //Creating an object of the commanding thread
         commandingThread commandThread = new commandingThread(routerStatic);
@@ -77,34 +77,7 @@ public class router {
 
 	}
 
-    // public void receiveCommands(){
-    //     try{
-
-    //         DatagramSocket serverSocket = new DatagramSocket(9875);
-    //         byte[] receiveData = new byte[1024];
-    //         byte[] sendData = new byte[1024];
-
-    //         while(true)
-    //         {
-    //             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-    //             serverSocket.receive(receivePacket);
-    //             String sentence = new String(receivePacket.getData());
-    //             InetAddress IPAddress = receivePacket.getAddress();
-    //             int port = receivePacket.getPort();
-
-    //             System.out.println(this.distanceVector);
-    //             // sendData = this.distanceVector.getBytes();
-    //             // DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, port);
-    //             // serverSocket.send(sendPacket);
-    //         }
-    //     }
-    //     catch(IOException ioe)
-    //      {
-    //         //Your error Message here
-    //         System.out.println("expection yay");
-    //       }
-    // }
-
+   
 	// method that updates the cost between two nodes
 	 public boolean changeDVCost(String dstIP, String dstPort, int newWeight){   
 	        boolean change = false;
@@ -148,6 +121,7 @@ public class router {
           	// update the cost
             currentRouterDV.put(toKey, totalNewWeight);
             changes = true;
+            System.out.println("Router " + this.ipAddress + ":" + this.portNumber + " has changed its route");
           }
 
       // if the router odes not contain the node in its distance vector (not a neighbor)
@@ -198,6 +172,8 @@ public class router {
                     String[] myInfo = firstStr.split(" ");
                     this.ipAddress = myInfo[0];
                     this.portNumber = myInfo[1];
+
+                    System.out.println("Router has been created with IP address " + this.ipAddress + " and port number " + this.portNumber);
 
                     // already read first line
                     firstLine = false;
@@ -288,7 +264,7 @@ public class router {
 
   // returns routers neighbor table
   public ArrayList<ArrayList<String>> getNeighborTable(){
-  	return this,neighborTable;
+  	return this.neighborTable;
   }
 	
 }

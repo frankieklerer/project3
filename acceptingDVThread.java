@@ -1,7 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.lang.*;
-
+import java.util.*;
 /**
 * Thread to accept incoming messages of a router from its neighbors d perform the necessary operations
 **/
@@ -14,7 +14,7 @@ public class acceptingDVThread implements Runnable{
 	private String ipAddress;
 
 	// port number of the router that the thread is spawning from
-	private Integer portNumber;
+	private int portNumber;
 
 	// constructor 
 	public acceptingDVThread(router r){
@@ -34,32 +34,60 @@ public class acceptingDVThread implements Runnable{
 
 		try{
 
+			System.out.println("good1");
+
 			// starts a server socket to communicate
-		   	DatagramSocket serverSocket = new DatagramSocket(portNumber);
+		   	DatagramSocket serverSocket = new DatagramSocket(1000);
+		   	System.out.println("PRINT SOMETHING " + serverSocket.getPort());
 			byte[] receiveData = new byte[1024];
 			byte[] sendData = new byte[1024];
+			System.out.println("good2");
 
 			while(true){
+				System.out.println("good3");
 
 				// accepting thread receives a packet
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
+				System.out.println("good4");
 
 				// extracts message and parses it
 				String incomingMessage = new String(receivePacket.getData());
-				this.parsePacket(incomingMessage);
+				boolean changed = this.parsePacket(incomingMessage);
+				System.out.println("good5");
 
-				//method that take sentence, parse DV, do dv alg, change instancerouter.dv if needed
-				//if change return boolean true, and send out new dv to neighbors
+				System.out.println("Received message " + incomingMessage);
+				
+				if(changed)
+				{
+				ArrayList<ArrayList<String>> neighborTable = instanceRouter.getNeighborTable();
 
-
-				InetAddress IPAddress = receivePacket.getAddress();
-				int port = receivePacket.getPort();
-		//		sendData = sentence.getBytes();
-
-				//sends back same data
-				DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, port);
-				serverSocket.send(sendPacket);
+					for(ArrayList<String> neighborRouterInfo: neighborTable)
+					{
+						String neighborIP = neighborRouterInfo.get(0);
+						Integer neighborPort = Integer.parseInt(neighborRouterInfo.get(1));
+						InetAddress IPAddress = InetAddress.getByName(neighborIP);
+						ArrayList<String> distanceVectors = instanceRouter.toStringDV();
+						String data = "DVU//";
+						for(String tempRouterInfo : distanceVectors)
+						{
+							data = data + tempRouterInfo + "//";
+						}
+						sendData = data.getBytes();
+						DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, neighborPort);
+						serverSocket.send(sendPacket);
+						System.out.println("from accepting state, sent " + data);
+					}
+				}
+				else{
+						String data = "";
+					    sendData = data.getBytes();
+					    InetAddress IPAddress = receivePacket.getAddress();
+						int port = receivePacket.getPort();
+						DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, port);
+						serverSocket.send(sendPacket);
+						System.out.println("from accepting state, sent " + data);
+				}
 			}
 		}
 		catch(IOException ioe){
@@ -68,8 +96,9 @@ public class acceptingDVThread implements Runnable{
 	}
 
 	// method to parse packet receive to analyze message in morder to determine how to nperform necessary oprtations
-	public void parsePacket(String sentence){
+	public boolean parsePacket(String sentence){
 
+		boolean changes = false;
 		// split message up
 		String[] data = sentence.split("//");
 		String packetType = data[0];
@@ -104,12 +133,12 @@ public class acceptingDVThread implements Runnable{
 				for(int i = 1; i < splitNodes.length; i++){
 
 					String[] toNode = splitNodes[i].split(":");
-					String toKey = tempToNode[1] + ":" + toNode[2];
+					String toKey = toNode[1] + ":" + toNode[2];
 					int cost = (int)Integer.parseInt(toNode[3]);
 
 					// check if THIS router has made any changes to its DV update as a result of the received DV update
 					// if true, must send its DV update to neighbors
-					boolean dvChange = instanceRouter.checkDVforChanges(fromKey, toKey, cost);
+					changes = instanceRouter.checkDVforChanges(fromKey, toKey, cost);
 					
 					//if true, send dv update to neighbors
 				}
@@ -117,11 +146,20 @@ public class acceptingDVThread implements Runnable{
 			
 		// else if the message is a weight update
 		}else if(packetType.equals("WU")){
+			String[] changeInfo = data[1].split(":");
+			String fromKey = changeInfo[0] + ":" + changeInfo[1];
+			String toKey = changeInfo[2] + ":" + changeInfo[3];
+			int newcost = (int)Integer.parseInt(changeInfo[4]);
 
+			changes = instanceRouter.checkDVforChanges(fromKey, toKey, newcost);
+			//if true send dv update to nieghbors
+				
 			// change weight in routers distance vector
 			// poisoned reverse ot not
 
 		}
+
+		return changes;
 	}
 }
 
