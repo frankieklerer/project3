@@ -3,10 +3,15 @@ import java.net.*;
 import java.util.*;
 import java.lang.*;
 
+<<<<<<< HEAD
 /**
 * Sending thread is a thread for sending a DV update (that should happen every n seconds). 
 **/
 public class sendingDVThread implements Runnable{
+=======
+
+public class sendingDVThread implements Runnable extends TimerTask{
+>>>>>>> e51b6e5cb799c1a28e8d9c8354e0477987c23652
 
 	// instance of the router that the thread is spawning from
 	private router instanceRouter;
@@ -36,13 +41,13 @@ public class sendingDVThread implements Runnable{
 	public void run() {
 		this.sendDVUpdate();
 				
-		// Timer timer = new Timer();
+		Timer timer = new Timer();
 
-		// timer.schedule(new TimerTask(){ @Override
-  //           public void run() {
-  //               sendDVUpdate();
-  //           }
-  //       }, 0, timerVar);
+		timer.schedule(new TimerTask(){ @Override
+            public void run() {
+                sendDVUpdate();
+            }
+        }, 0, timerVar);
 		
 	}
 
