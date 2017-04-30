@@ -63,7 +63,7 @@ public class sendingDVThread implements Runnable {
 
 			try{
 				DatagramSocket clientSocket = new DatagramSocket();
-				// InetAddress routerIP = InetAddress.getByName(this.ipAddress);
+				//InetAddress routerIP = InetAddress.getByName("localhost");
 				// clientSocket.connect(routerIP, this.portNumber);
 				InetAddress routerIP = InetAddress.getByName(neighborIP);
 				clientSocket.connect(routerIP, neighborPort);
