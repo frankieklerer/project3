@@ -4,23 +4,21 @@ import java.util.*;
 import java.lang.*;
 
 
-public class sendingDVThread implements Runnable
-{
-	router instanceRouter;
-	String ipAddress;
-	Integer portNumber;
-	long timerVar = 5000; //5 seconds
+public class sendingDVThread implements Runnable{
 
-	public sendingDVThread(router r)
-	{	
+	private router instanceRouter;
+	private String ipAddress;
+	private Integer portNumber;
+	private long timerVar = 5000; //5 seconds
+
+	public sendingDVThread(router r){	
 
 		this.instanceRouter = r;
 		this.portNumber = Integer.parseInt(instanceRouter.getRouterPort());
 		this.ipAddress = instanceRouter.getRouterIP();
 	}
-	public void run() 
-	{
-		System.out.println("initial DV sent");
+
+	public void run() {
 		this.sendDVUpdate();
 				
 		// Timer timer = new Timer();
@@ -33,14 +31,17 @@ public class sendingDVThread implements Runnable
 		
 	}
 
-//must send dv update to all neighbors
-	public void sendDVUpdate()
-	{
-		System.out.println("Router " + this.ipAddress+":"+this.portNumber+ " sending dv update to neighbors");
-		ArrayList<ArrayList<String>> neighborTable = instanceRouter.getNeighborTable();
+	//must send dv update to all neighbors
+	public void sendDVUpdate(){
 
-		for(ArrayList<String> neighborRouterInfo: neighborTable)
-		{
+		System.out.println("Router " + this.ipAddress+":"+this.portNumber+ " is sending DV update to neighbors");
+
+		// fetch the routers neighbor table
+		ArrayList<ArrayList<String>> neighborTable = this.instanceRouter.getNeighborTable();
+
+		// for every router in its neighbor table, send them an update
+		for(ArrayList<String> neighborRouterInfo: neighborTable){
+
 			String neighborIP = neighborRouterInfo.get(0);
 			Integer neighborPort = Integer.parseInt(neighborRouterInfo.get(1));
 
@@ -49,16 +50,17 @@ public class sendingDVThread implements Runnable
 				InetAddress IPAddress = InetAddress.getByName(neighborIP);
 				byte[] sendData = new byte[1024];
 				byte[] receiveData = new byte[1024];
-				ArrayList<String> distanceVectors = instanceRouter.toStringDV();
+				ArrayList<String> distanceVectors = this.instanceRouter.toStringDV();
 				String data = "DVU//";
-				for(String tempRouterInfo : distanceVectors)
-				{
+
+				for(String tempRouterInfo : distanceVectors){
 					data = data + tempRouterInfo + "//";
 				}
+
 				sendData = data.getBytes();
 				DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, neighborPort);
 				clientSocket.send(sendPacket);
-				System.out.println("sending threadto " + neighborIP + ":" + neighborPort + " data sent: " + data);
+				System.out.println("Router " + this.ipAddress + ":" + this.portNumber + " sending DV update to " + neighborIP + ":" + neighborPort + " data sent: " + data);
 
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				clientSocket.receive(receivePacket);
@@ -66,9 +68,8 @@ public class sendingDVThread implements Runnable
 				System.out.println("received message " + sentence);
 				parsePacket(sentence);
 				clientSocket.close();
-			}
-			catch(IOException ioe)
-			{
+
+			}catch(IOException ioe){
 			    //Your error Message here
 			    System.out.println("expection yay");
 		    }
