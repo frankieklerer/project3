@@ -62,14 +62,15 @@ public class sendingDVThread implements Runnable {
 			Integer neighborPort = Integer.parseInt(neighborRouterInfo.get(1));
 
 			try{
+
+				//BufferedReader inFromUser =new BufferedReader(new InputStreamReader(System.in));
 				DatagramSocket clientSocket = new DatagramSocket();
 				//InetAddress routerIP = InetAddress.getByName("localhost");
 				// clientSocket.connect(routerIP, this.portNumber);
-				InetAddress routerIP = InetAddress.getByName(neighborIP);
-				clientSocket.connect(routerIP, neighborPort);
+				InetAddress IPaddress = InetAddress.getByName("hostname");
+				//clientSocket.connect(IPaddress, neighborPort);
 				System.out.println("Router " + this.ipAddress + ":" + this.portNumber + " has sent a packet to " + clientSocket.getPort() + ":" + clientSocket.getInetAddress() + " has a sending thread.");
 
-				InetAddress IPaddress = InetAddress.getByName(neighborIP);
 	
 				byte[] sendData = new byte[1024];
 				byte[] receiveData = new byte[1024];

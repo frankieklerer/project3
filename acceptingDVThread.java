@@ -34,9 +34,9 @@ public class acceptingDVThread implements Runnable{
 		try{
 
 			// starts a server socket to communicate
-		   	DatagramSocket serverSocket = new DatagramSocket();
-		   	InetAddress routerIP = InetAddress.getByName(this.ipAddress);
-		    serverSocket.connect(routerIP, this.portNumber);
+		   	DatagramSocket serverSocket = new DatagramSocket(this.portNumber);
+		   	//InetAddress routerIP = InetAddress.getByName(this.ipAddress);
+		    //serverSocket.connect(routerIP, this.portNumber);
 		   	// System.out.println("Router " + serverSocket.getPort() + ":" + serverSocket.getInetAddress() + " has an accepting thread.");
 			byte[] receiveData = new byte[1024];
 			byte[] sendData = new byte[1024];
