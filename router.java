@@ -3,6 +3,7 @@ import java.io.*;
 import java.net.*;
 import java.lang.*;
 
+
 /**
 * The router class responsibe for updating 
 **/
@@ -60,6 +61,10 @@ public class router {
         //Starting the command thread
         Thread cthread = new Thread(commandThread);
         cthread.start();
+
+        long timerVar = 5000; //5 seconds
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new sendingDVThread(routerStatic),0,timerVar);
         
 	}
 

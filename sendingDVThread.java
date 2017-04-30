@@ -4,12 +4,12 @@ import java.util.*;
 import java.lang.*;
 
 
-public class sendingDVThread implements Runnable extends TimerTask{
+public class sendingDVThread extends TimerTask implements Runnable {
 
 	private router instanceRouter;
 	private String ipAddress;
 	private Integer portNumber;
-	private long timerVar = 5000; //5 seconds
+
 
 	public sendingDVThread(router r){	
 
@@ -20,15 +20,6 @@ public class sendingDVThread implements Runnable extends TimerTask{
 
 	public void run() {
 		this.sendDVUpdate();
-				
-		Timer timer = new Timer();
-
-		timer.schedule(new TimerTask(){ @Override
-            public void run() {
-                sendDVUpdate();
-            }
-        }, 0, timerVar);
-		
 	}
 
 	//must send dv update to all neighbors
