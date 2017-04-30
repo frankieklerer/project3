@@ -52,7 +52,7 @@ public class sendingDVThread implements Runnable extends TimerTask{
 				// clientSocket.connect(routerIP, this.portNumber);
 				InetAddress routerIP = InetAddress.getByName(neighborIP);
 				clientSocket.connect(routerIP, neighborPort);
-				System.out.println("Router " + clientSocket.getPort() + ":" + clientSocket.getInetAddress() + " has a sending thread.");
+				//System.out.println("Router " + clientSocket.getPort() + ":" + clientSocket.getInetAddress() + " has a sending thread.");
 
 				InetAddress IPaddress = InetAddress.getByName(neighborIP);
 	
