@@ -35,7 +35,7 @@ public class commandingThread implements Runnable{
 
 		// scanner that thread uses to read command lines
 		Scanner scan = new Scanner(System.in);
-		System.out.println("Enter PRINT, MSG, CHANGE commands with its correct parameters...");
+		//System.out.println("Enter PRINT, MSG, CHANGE commands with its correct parameters...");
 
 		while(scan.hasNextLine()){
 
