@@ -3,15 +3,10 @@ import java.net.*;
 import java.util.*;
 import java.lang.*;
 
-<<<<<<< HEAD
 /**
 * Sending thread is a thread for sending a DV update (that should happen every n seconds). 
 **/
-public class sendingDVThread implements Runnable{
-=======
-
-public class sendingDVThread implements Runnable extends TimerTask{
->>>>>>> e51b6e5cb799c1a28e8d9c8354e0477987c23652
+public class sendingDVThread implements Runnable {
 
 	// instance of the router that the thread is spawning from
 	private router instanceRouter;
@@ -72,7 +67,7 @@ public class sendingDVThread implements Runnable extends TimerTask{
 				// clientSocket.connect(routerIP, this.portNumber);
 				InetAddress routerIP = InetAddress.getByName(neighborIP);
 				clientSocket.connect(routerIP, neighborPort);
-				//System.out.println("Router " + clientSocket.getPort() + ":" + clientSocket.getInetAddress() + " has a sending thread.");
+				System.out.println("Router " + this.ipAddress + ":" + this.portNumber + " has sent a packet to " + clientSocket.getPort() + ":" + clientSocket.getInetAddress() + " has a sending thread.");
 
 				InetAddress IPaddress = InetAddress.getByName(neighborIP);
 	

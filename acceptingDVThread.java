@@ -31,7 +31,6 @@ public class acceptingDVThread implements Runnable{
 
 	// run method that the thread operates
 	public void run(){
-
 		try{
 
 			// starts a server socket to communicate
@@ -42,10 +41,12 @@ public class acceptingDVThread implements Runnable{
 			byte[] receiveData = new byte[1024];
 			byte[] sendData = new byte[1024];
 
+				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
 			while(true){
 
 				// accepting thread receives a packet
-				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+				//DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
 
 				// extracts message and parses it
