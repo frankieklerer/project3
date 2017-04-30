@@ -34,27 +34,23 @@ public class acceptingDVThread implements Runnable{
 
 		try{
 
-			System.out.println("good1");
-
 			// starts a server socket to communicate
-		   	DatagramSocket serverSocket = new DatagramSocket(1000);
-		   	System.out.println("PRINT SOMETHING " + serverSocket.getPort());
+		   	DatagramSocket serverSocket = new DatagramSocket();
+		   	InetAddress routerIP = InetAddress.getByName(this.ipAddress);
+		   	serverSocket.connect(routerIP, this.portNumber);
+		   	System.out.println("Router " + serverSocket.getPort() + ":" + serverSocket.getInetAddress() + " has an accepting thread.");
 			byte[] receiveData = new byte[1024];
 			byte[] sendData = new byte[1024];
-			System.out.println("good2");
 
 			while(true){
-				System.out.println("good3");
 
 				// accepting thread receives a packet
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
-				System.out.println("good4");
 
 				// extracts message and parses it
 				String incomingMessage = new String(receivePacket.getData());
 				boolean changed = this.parsePacket(incomingMessage);
-				System.out.println("good5");
 
 				System.out.println("Received message " + incomingMessage);
 				

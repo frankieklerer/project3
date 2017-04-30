@@ -62,10 +62,10 @@ public class router {
         
 	}
 
-	public router(String[] args){
+	 public router(String[] args){
 
-        // initializes distance vector
-		this.distanceVector = new HashMap<String, HashMap<String, Integer>>();
+       // initializes distance vector
+		  this.distanceVector = new HashMap<String, HashMap<String, Integer>>();
 
         // assigning the first argument to global variable
         this.poisonedReverse = Integer.parseInt(args[0]);
@@ -75,7 +75,7 @@ public class router {
 
         //System.out.println(this.neighborTable);
 
-	}
+	 }
 
    
 	// method that updates the cost between two nodes
@@ -208,8 +208,9 @@ public class router {
             System.out.println("Could not open file " + e);
         }
         
-        String fromKey = ipAddress + ":" + portNumber;
+        String fromKey = this.ipAddress + ":" + this.portNumber;
         distanceVector.put(fromKey, dv);
+        System.out.println("Router " + fromKey + " has been intialized with neighbors " + dv);
         return nodeArray;
     }
 

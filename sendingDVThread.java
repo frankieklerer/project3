@@ -14,16 +14,15 @@ public class sendingDVThread implements Runnable
 	public sendingDVThread(router r)
 	{	
 
-		instanceRouter = r;
-		portNumber = Integer.parseInt(instanceRouter.getRouterPort());
-		ipAddress = instanceRouter.getRouterIP();
+		this.instanceRouter = r;
+		this.portNumber = Integer.parseInt(instanceRouter.getRouterPort());
+		this.ipAddress = instanceRouter.getRouterIP();
 	}
 	public void run() 
 	{
 		System.out.println("initial DV sent");
-		sendDVUpdate();
-		
-		
+		this.sendDVUpdate();
+				
 		// Timer timer = new Timer();
 
 		// timer.schedule(new TimerTask(){ @Override
@@ -37,7 +36,7 @@ public class sendingDVThread implements Runnable
 //must send dv update to all neighbors
 	public void sendDVUpdate()
 	{
-		System.out.println("router " + this.ipAddress+":"+this.portNumber+ " sending dv update to neighbors");
+		System.out.println("Router " + this.ipAddress+":"+this.portNumber+ " sending dv update to neighbors");
 		ArrayList<ArrayList<String>> neighborTable = instanceRouter.getNeighborTable();
 
 		for(ArrayList<String> neighborRouterInfo: neighborTable)
