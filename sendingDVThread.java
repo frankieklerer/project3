@@ -6,28 +6,19 @@ import java.lang.*;
 /**
 * Sending thread is a thread for sending a DV update (that should happen every n seconds). 
 **/
-public class sendingDVThread implements Runnable {
 
-<<<<<<< HEAD
 public class sendingDVThread extends TimerTask implements Runnable {
 
-=======
 	// instance of the router that the thread is spawning from
->>>>>>> 0292ce67846479d4bf81c967a8e224278ffb0f8e
 	private router instanceRouter;
 
 	// IP address of the router that the thread is spawning from
 	private String ipAddress;
-<<<<<<< HEAD
-	private Integer portNumber;
-
-=======
 
 	// port number of the router that the thread is spawning from
 	private int portNumber;
 
 	private long timerVar = 5000; //5 seconds
->>>>>>> 0292ce67846479d4bf81c967a8e224278ffb0f8e
 
 	// Constructor
 	public sendingDVThread(router r){	
@@ -51,8 +42,7 @@ public class sendingDVThread extends TimerTask implements Runnable {
 	public void sendDVUpdate(){
 
 		System.out.println("Router " + this.ipAddress+":"+this.portNumber+ " is sending DV update to neighbors");
-
-		// fetch the routers neighbor table
+ 		// fetch the routers neighbor table
 		ArrayList<ArrayList<String>> neighborTable = this.instanceRouter.getNeighborTable();
 
 		// for every router in its neighbor table, send them an update

@@ -32,7 +32,6 @@ public class acceptingDVThread implements Runnable{
 	// run method that the thread operates
 	public void run(){
 		try{
-
 			// starts a server socket to communicate
 		   	DatagramSocket serverSocket = new DatagramSocket();
 		   	InetAddress routerIP = InetAddress.getByName(this.ipAddress);
