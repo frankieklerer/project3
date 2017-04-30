@@ -35,9 +35,9 @@ public class acceptingDVThread implements Runnable{
 		try{
 
 			// starts a server socket to communicate
-		   	DatagramSocket serverSocket = new DatagramSocket(this.portNumber);
-		   	// InetAddress routerIP = InetAddress.getByName(this.ipAddress);
-		   	// serverSocket.connect(routerIP, this.portNumber);
+		   	DatagramSocket serverSocket = new DatagramSocket();
+		   	InetAddress routerIP = InetAddress.getByName(this.ipAddress);
+		    serverSocket.connect(routerIP, this.portNumber);
 		   	// System.out.println("Router " + serverSocket.getPort() + ":" + serverSocket.getInetAddress() + " has an accepting thread.");
 			byte[] receiveData = new byte[1024];
 			byte[] sendData = new byte[1024];
@@ -52,21 +52,21 @@ public class acceptingDVThread implements Runnable{
 				String incomingMessage = new String(receivePacket.getData());
 				boolean changed = this.parsePacket(incomingMessage);
 
-				System.out.println("Received message " + incomingMessage);
+				System.out.println("Router " + this.ipAddress + ":" + this.portNumber +  " has received message " + incomingMessage);
 				
-				if(changed)
-				{
+				if(changed){
+
 				ArrayList<ArrayList<String>> neighborTable = instanceRouter.getNeighborTable();
 
-					for(ArrayList<String> neighborRouterInfo: neighborTable)
-					{
+					for(ArrayList<String> neighborRouterInfo: neighborTable){
+
 						String neighborIP = neighborRouterInfo.get(0);
 						Integer neighborPort = Integer.parseInt(neighborRouterInfo.get(1));
 						InetAddress IPAddress = InetAddress.getByName(neighborIP);
 						ArrayList<String> distanceVectors = instanceRouter.toStringDV();
 						String data = "DVU//";
-						for(String tempRouterInfo : distanceVectors)
-						{
+
+						for(String tempRouterInfo : distanceVectors){
 							data = data + tempRouterInfo + "//";
 						}
 						sendData = data.getBytes();
@@ -74,8 +74,7 @@ public class acceptingDVThread implements Runnable{
 						serverSocket.send(sendPacket);
 						System.out.println("from accepting state, sent " + data);
 					}
-				}
-				else{
+				}else{
 						String data = "";
 					    sendData = data.getBytes();
 					    InetAddress IPAddress = receivePacket.getAddress();
@@ -85,8 +84,7 @@ public class acceptingDVThread implements Runnable{
 						System.out.println("from accepting state, sent " + data);
 				}
 			}
-		}
-		catch(IOException ioe){
+		}catch(IOException ioe){
 		    System.out.println("Exception caught in accepting thread of router " + this.ipAddress);
 		 }
 	}

@@ -3,21 +3,36 @@ import java.net.*;
 import java.util.*;
 import java.lang.*;
 
-
+/**
+* Sending thread is a thread for sending a DV update (that should happen every n seconds). 
+**/
 public class sendingDVThread implements Runnable{
 
+	// instance of the router that the thread is spawning from
 	private router instanceRouter;
+
+	// IP address of the router that the thread is spawning from
 	private String ipAddress;
-	private Integer portNumber;
+
+	// port number of the router that the thread is spawning from
+	private int portNumber;
+
 	private long timerVar = 5000; //5 seconds
 
+	// Constructor
 	public sendingDVThread(router r){	
 
+		// initializing instance of router
 		this.instanceRouter = r;
+
+		// initializing instance of port number of router
 		this.portNumber = Integer.parseInt(instanceRouter.getRouterPort());
+
+		// initializing instance of IP address of router
 		this.ipAddress = instanceRouter.getRouterIP();
 	}
 
+	// run method that the thread operates
 	public void run() {
 		this.sendDVUpdate();
 				
@@ -43,7 +58,7 @@ public class sendingDVThread implements Runnable{
 		for(ArrayList<String> neighborRouterInfo: neighborTable){
 
 			String neighborIP = neighborRouterInfo.get(0);
-			System.out.println("NEIGHBOR IP " + neighborIP);
+			//System.out.println("NEIGHBOR IP " + neighborIP);
 			Integer neighborPort = Integer.parseInt(neighborRouterInfo.get(1));
 
 			try{
@@ -56,7 +71,6 @@ public class sendingDVThread implements Runnable{
 
 				InetAddress IPaddress = InetAddress.getByName(neighborIP);
 	
-
 				byte[] sendData = new byte[1024];
 				byte[] receiveData = new byte[1024];
 				ArrayList<String> distanceVectors = this.instanceRouter.toStringDV();
@@ -79,8 +93,7 @@ public class sendingDVThread implements Runnable{
 				clientSocket.close();
 
 			}catch(IOException ioe){
-			    //Your error Message here
-			    System.out.println("expection yay");
+			    System.out.println("Exception caught in sending thread of router " + this.ipAddress);
 		    }
 		}
 	}
