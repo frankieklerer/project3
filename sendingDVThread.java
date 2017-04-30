@@ -7,8 +7,11 @@ import java.lang.*;
 * Sending thread is a thread for sending a DV update (that should happen every n seconds). 
 **/
 
+<<<<<<< HEAD
 public class sendingDVThread extends TimerTask implements Runnable {
 
+=======
+>>>>>>> 19bb87614e66aa21d667c999fb971ded484f74bf
 	// instance of the router that the thread is spawning from
 	private router instanceRouter;
 
@@ -49,26 +52,22 @@ public class sendingDVThread extends TimerTask implements Runnable {
 		for(ArrayList<String> neighborRouterInfo: neighborTable){
 
 			String neighborIP = neighborRouterInfo.get(0);
-			//System.out.println("NEIGHBOR IP " + neighborIP);
 			Integer neighborPort = Integer.parseInt(neighborRouterInfo.get(1));
 
 			try{
-				DatagramSocket clientSocket = new DatagramSocket();
-				//InetAddress routerIP = InetAddress.getByName("localhost");
-				// clientSocket.connect(routerIP, this.portNumber);
-				InetAddress routerIP = InetAddress.getByName(neighborIP);
-				clientSocket.connect(routerIP, neighborPort);
-				System.out.println("Router " + this.ipAddress + ":" + this.portNumber + " has sent a packet to " + clientSocket.getPort() + ":" + clientSocket.getInetAddress() + " has a sending thread.");
 
-				InetAddress IPaddress = InetAddress.getByName(neighborIP);
-	
+				//BufferedReader inFromUser =new BufferedReader(new InputStreamReader(System.in));
+				DatagramSocket clientSocket = new DatagramSocket();
+				InetAddress IPaddress = InetAddress.getByName("127.0.0.1");
+				//System.out.println("Router " + this.ipAddress + ":" + this.portNumber + " has sent a packet to " + clientSocket.getPort() + ":" + clientSocket.getInetAddress());
+
 				byte[] sendData = new byte[1024];
 				byte[] receiveData = new byte[1024];
 				ArrayList<String> distanceVectors = this.instanceRouter.toStringDV();
 				String data = "DVU//";
 
 				for(String tempRouterInfo : distanceVectors){
-					data = data + tempRouterInfo + "//";
+					data += tempRouterInfo + "//";
 				}
 
 				sendData = data.getBytes();
@@ -84,7 +83,7 @@ public class sendingDVThread extends TimerTask implements Runnable {
 				clientSocket.close();
 
 			}catch(IOException ioe){
-			    System.out.println("Exception caught in sending thread of router " + this.ipAddress);
+			    System.out.println("Exception caught in sending thread of router " + this.ipAddress + ":" + this.portNumber);
 		    }
 		}
 	}

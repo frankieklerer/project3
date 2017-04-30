@@ -33,19 +33,16 @@ public class acceptingDVThread implements Runnable{
 	public void run(){
 		try{
 			// starts a server socket to communicate
-		   	DatagramSocket serverSocket = new DatagramSocket();
-		   	InetAddress routerIP = InetAddress.getByName(this.ipAddress);
-		    serverSocket.connect(routerIP, this.portNumber);
-		   	// System.out.println("Router " + serverSocket.getPort() + ":" + serverSocket.getInetAddress() + " has an accepting thread.");
+		   	DatagramSocket serverSocket = new DatagramSocket(this.portNumber);
+		 
 			byte[] receiveData = new byte[1024];
 			byte[] sendData = new byte[1024];
 
-				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 
 			while(true){
 
 				// accepting thread receives a packet
-				//DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
 
 				// extracts message and parses it
@@ -60,17 +57,16 @@ public class acceptingDVThread implements Runnable{
 
 					for(ArrayList<String> neighborRouterInfo: neighborTable){
 
-						String neighborIP = neighborRouterInfo.get(0);
-						Integer neighborPort = Integer.parseInt(neighborRouterInfo.get(1));
-						InetAddress IPAddress = InetAddress.getByName(neighborIP);
+						InetAddress IPAddress = receivePacket.getAddress();
+						int port = receivePacket.getPort();
 						ArrayList<String> distanceVectors = instanceRouter.toStringDV();
 						String data = "DVU//";
 
 						for(String tempRouterInfo : distanceVectors){
-							data = data + tempRouterInfo + "//";
+							data += tempRouterInfo + "//";
 						}
 						sendData = data.getBytes();
-						DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, neighborPort);
+						DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, port);
 						serverSocket.send(sendPacket);
 						System.out.println("from accepting state, sent " + data);
 					}

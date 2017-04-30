@@ -64,7 +64,7 @@ public class router {
 
         long timerVar = 5000; //5 seconds
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new sendingDVThread(routerStatic),0,timerVar);
+       // timer.scheduleAtFixedRate(new sendingDVThread(routerStatic),0,timerVar);
         
 	}
 
