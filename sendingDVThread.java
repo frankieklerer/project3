@@ -43,11 +43,20 @@ public class sendingDVThread implements Runnable{
 		for(ArrayList<String> neighborRouterInfo: neighborTable){
 
 			String neighborIP = neighborRouterInfo.get(0);
+			System.out.println("NEIGHBOR IP " + neighborIP);
 			Integer neighborPort = Integer.parseInt(neighborRouterInfo.get(1));
 
 			try{
 				DatagramSocket clientSocket = new DatagramSocket();
-				InetAddress IPAddress = InetAddress.getByName(neighborIP);
+				// InetAddress routerIP = InetAddress.getByName(this.ipAddress);
+				// clientSocket.connect(routerIP, this.portNumber);
+				InetAddress routerIP = InetAddress.getByName(neighborIP);
+				clientSocket.connect(routerIP, neighborPort);
+				System.out.println("Router " + clientSocket.getPort() + ":" + clientSocket.getInetAddress() + " has a sending thread.");
+
+				InetAddress IPaddress = InetAddress.getByName(neighborIP);
+	
+
 				byte[] sendData = new byte[1024];
 				byte[] receiveData = new byte[1024];
 				ArrayList<String> distanceVectors = this.instanceRouter.toStringDV();
@@ -58,7 +67,7 @@ public class sendingDVThread implements Runnable{
 				}
 
 				sendData = data.getBytes();
-				DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, neighborPort);
+				DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPaddress, neighborPort);
 				clientSocket.send(sendPacket);
 				System.out.println("Router " + this.ipAddress + ":" + this.portNumber + " sending DV update to " + neighborIP + ":" + neighborPort + " data sent: " + data);
 
