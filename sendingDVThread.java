@@ -8,16 +8,26 @@ import java.lang.*;
 **/
 public class sendingDVThread implements Runnable {
 
+<<<<<<< HEAD
+public class sendingDVThread extends TimerTask implements Runnable {
+
+=======
 	// instance of the router that the thread is spawning from
+>>>>>>> 0292ce67846479d4bf81c967a8e224278ffb0f8e
 	private router instanceRouter;
 
 	// IP address of the router that the thread is spawning from
 	private String ipAddress;
+<<<<<<< HEAD
+	private Integer portNumber;
+
+=======
 
 	// port number of the router that the thread is spawning from
 	private int portNumber;
 
 	private long timerVar = 5000; //5 seconds
+>>>>>>> 0292ce67846479d4bf81c967a8e224278ffb0f8e
 
 	// Constructor
 	public sendingDVThread(router r){	
@@ -35,15 +45,6 @@ public class sendingDVThread implements Runnable {
 	// run method that the thread operates
 	public void run() {
 		this.sendDVUpdate();
-				
-		Timer timer = new Timer();
-
-		timer.schedule(new TimerTask(){ @Override
-            public void run() {
-                sendDVUpdate();
-            }
-        }, 0, timerVar);
-		
 	}
 
 	//must send dv update to all neighbors
