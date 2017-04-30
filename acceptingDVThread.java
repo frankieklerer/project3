@@ -38,7 +38,7 @@ public class acceptingDVThread implements Runnable{
 		 
 			byte[] receiveData = new byte[1024];
 			byte[] sendData = new byte[1024];
-System.out.println("in accepting!!!");
+
 
 			while(true){
 
