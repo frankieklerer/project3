@@ -4,7 +4,7 @@ import java.util.*;
 import java.lang.*;
 
 
-public class sendingDVThread implements Runnable{
+public class sendingDVThread implements Runnable extends TimerTask{
 
 	private router instanceRouter;
 	private String ipAddress;
@@ -21,13 +21,13 @@ public class sendingDVThread implements Runnable{
 	public void run() {
 		this.sendDVUpdate();
 				
-		// Timer timer = new Timer();
+		Timer timer = new Timer();
 
-		// timer.schedule(new TimerTask(){ @Override
-  //           public void run() {
-  //               sendDVUpdate();
-  //           }
-  //       }, 0, timerVar);
+		timer.schedule(new TimerTask(){ @Override
+            public void run() {
+                sendDVUpdate();
+            }
+        }, 0, timerVar);
 		
 	}
 
