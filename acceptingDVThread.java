@@ -32,12 +32,13 @@ public class acceptingDVThread implements Runnable{
 	// run method that the thread operates
 	public void run(){
 		try{
+			
 			// starts a server socket to communicate
 		   	DatagramSocket serverSocket = new DatagramSocket(this.portNumber);
 		 
 			byte[] receiveData = new byte[1024];
 			byte[] sendData = new byte[1024];
-
+System.out.println("in accepting!!!");
 
 			while(true){
 

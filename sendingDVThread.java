@@ -7,11 +7,8 @@ import java.lang.*;
 * Sending thread is a thread for sending a DV update (that should happen every n seconds). 
 **/
 
-<<<<<<< HEAD
 public class sendingDVThread extends TimerTask implements Runnable {
 
-=======
->>>>>>> 19bb87614e66aa21d667c999fb971ded484f74bf
 	// instance of the router that the thread is spawning from
 	private router instanceRouter;
 
