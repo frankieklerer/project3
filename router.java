@@ -112,7 +112,7 @@ public class router {
       String routerCurrentKey = ipAddress + ":" + portNumber;
 
   		// do not change anything is the from key is equal to the from key
-      if(toKey.equals(routerCurrentKey)){
+      if(toKey.equals(routerCurrentKey) || fromKey.equals(routerCurrentKey)){
           return false;
       }
 

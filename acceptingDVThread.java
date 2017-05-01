@@ -48,10 +48,10 @@ public class acceptingDVThread implements Runnable{
 
 				// extracts message and parses it
 				String incomingMessage = new String(receivePacket.getData());
-
+				System.out.println("Router " + this.ipAddress + ":" + this.portNumber +  " has received message " + incomingMessage);
+			
 				boolean changed = this.parsePacket(incomingMessage);
 
-				System.out.println("Router " + this.ipAddress + ":" + this.portNumber +  " has received message " + incomingMessage);
 				
 				if(changed){
 
@@ -139,7 +139,9 @@ public class acceptingDVThread implements Runnable{
 			
 		// else if the message is a weight update
 		}else if(packetType.equals("WU")){
+			//System.out.println("DATA" + Arrays.toString(data));
 			String[] changeInfo = data[1].split(":");
+			//System.out.println(Arrays.toString(changeInfo));
 			String fromKey = changeInfo[0] + ":" + changeInfo[1];
 			String toKey = changeInfo[2] + ":" + changeInfo[3];
 			int newcost = (int)Integer.parseInt(changeInfo[4]);
