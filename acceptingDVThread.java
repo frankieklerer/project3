@@ -48,6 +48,7 @@ public class acceptingDVThread implements Runnable{
 
 				// extracts message and parses it
 				String incomingMessage = new String(receivePacket.getData());
+
 				boolean changed = this.parsePacket(incomingMessage);
 
 				System.out.println("Router " + this.ipAddress + ":" + this.portNumber +  " has received message " + incomingMessage);
@@ -78,11 +79,11 @@ public class acceptingDVThread implements Runnable{
 						int port = receivePacket.getPort();
 						DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, port);
 						serverSocket.send(sendPacket);
-						System.out.println("from accepting state, sent " + data);
+						//System.out.println("from accepting state, sent " + data);
 				}
 			}
 		}catch(IOException ioe){
-		    System.out.println("Exception caught in accepting thread of router " + this.ipAddress);
+		    System.out.println("Exception: " + ioe + " caught in accepting thread of router " + this.ipAddress);
 		 }
 	}
 
@@ -93,11 +94,11 @@ public class acceptingDVThread implements Runnable{
 		// split message up
 		String[] data = sentence.split("//");
 		String packetType = data[0];
-
+	
 		// if the message is just a message from a router
 		if(packetType.equals("MSG")){
 
-			System.out.println("Router " + this.ipAddress + " has received a message.");
+			System.out.println("Message " + data[1] + " from " );
 
 
 
@@ -106,19 +107,20 @@ public class acceptingDVThread implements Runnable{
 		}else if(packetType.equals("DVU")){
 
 			System.out.println("Router " + this.ipAddress + " has received a distance vector update.");
-
 			// syntax is "from:ip:port to:ip:port:cost ..."
 
 			// for every node in the update
-			for(String temp: data){
+			for(int k = 1; k < data.length-1; k++){
+				String temp = data[k];
 
 				// split each message by node
 				String[] splitNodes = temp.split(" ");
 
 				// from node is the first node, extract its information
 				String[] fromNode = splitNodes[0].split(":");
+
 				String fromKey = fromNode[1] + ":" + fromNode[2];
-				System.out.println("DV update from " + fromKey);
+				System.out.println("new DV update received from " + fromKey + " with the following distances: ");
 
 				// split each node by ip address, port, cost
 				for(int i = 1; i < splitNodes.length; i++){
@@ -126,7 +128,7 @@ public class acceptingDVThread implements Runnable{
 					String[] toNode = splitNodes[i].split(":");
 					String toKey = toNode[1] + ":" + toNode[2];
 					int cost = (int)Integer.parseInt(toNode[3]);
-
+					System.out.println(toKey + " " + cost);
 					// check if THIS router has made any changes to its DV update as a result of the received DV update
 					// if true, must send its DV update to neighbors
 					changes = instanceRouter.checkDVforChanges(fromKey, toKey, cost);
@@ -141,6 +143,7 @@ public class acceptingDVThread implements Runnable{
 			String fromKey = changeInfo[0] + ":" + changeInfo[1];
 			String toKey = changeInfo[2] + ":" + changeInfo[3];
 			int newcost = (int)Integer.parseInt(changeInfo[4]);
+			System.out.println("new weight to neighbor " + toKey + " of " + newcost );
 
 			changes = instanceRouter.checkDVforChanges(fromKey, toKey, newcost);
 			//if true send dv update to nieghbors

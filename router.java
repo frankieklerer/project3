@@ -97,7 +97,12 @@ public class router {
 	        }
 	        sourceDV.put(toKey, newWeight);
 	        distanceVector.put(fromKey, sourceDV);
-	        System.out.println("new weight to neighbor " + dstIP + ":" + dstPort + " of " + newWeight);
+	        System.out.println("new dv calculated: ");
+          ArrayList<String> toPrintDV = this.toStringforAmirsPrints();
+          for(int i = 0; i < toPrintDV.size(); i++){
+              System.out.println(toPrintDV.get(i));
+          }
+
 	        return change;
    }
 
@@ -105,7 +110,7 @@ public class router {
    public boolean checkDVforChanges(String fromKey, String toKey, int newWeight){   
       boolean changes = false;
       String routerCurrentKey = ipAddress + ":" + portNumber;
-  
+
   		// do not change anything is the from key is equal to the from key
       if(toKey.equals(routerCurrentKey)){
           return false;
@@ -113,27 +118,30 @@ public class router {
 
       // get the routers distance vector
       HashMap<String, Integer> currentRouterDV = distanceVector.get(routerCurrentKey);
+      
       int costToNode = currentRouterDV.get(fromKey);
 
       // possible new weight
       int totalNewWeight = newWeight + costToNode;
-
-      // if the router already contains the node in their distance vector, check if they can updae the cost
-      if(currentRouterDV.containsKey(toKey)){
-
-      		// if the posssible new cost is less than the current cost
-          if(totalNewWeight < currentRouterDV.get(toKey)){
-
-          	// update the cost
-            currentRouterDV.put(toKey, totalNewWeight);
-            changes = true;
-            System.out.println("Router " + this.ipAddress + ":" + this.portNumber + " has changed its route");
-          }
-
+      
       // if the router odes not contain the node in its distance vector (not a neighbor)
-      }else{
+     if(!(currentRouterDV.containsKey(toKey))){
+
           currentRouterDV.put(toKey, totalNewWeight);
           changes = true;
+      
+      // if the router already contains the node in their distance vector, check if they can updae the cost
+      }else{
+
+          // if the posssible new cost is less than the current cost
+          if(totalNewWeight < currentRouterDV.get(toKey)){
+
+            // update the cost
+            currentRouterDV.put(toKey, totalNewWeight);
+            changes = true;
+            System.out.println("ROUTER " + this.ipAddress + ":" + this.portNumber + " has changed its route to " + toKey);
+          }
+
       }
   
       // update the routers entire distance vector 
@@ -146,7 +154,14 @@ public class router {
           toInsert.put(toKey, newWeight);
           distanceVector.put(fromKey, toInsert);
       }
-
+      if(changes)
+      {
+          System.out.println("new dv calculated: ");
+          ArrayList<String> toPrintDV = this.toStringforAmirsPrints();
+          for(int i = 0; i < toPrintDV.size(); i++){
+              System.out.println(toPrintDV.get(i));
+          }
+      }
       return changes;
       
   }
@@ -246,6 +261,26 @@ public class router {
 		}
 		return output;
 	}
+
+  public ArrayList<String> toStringforAmirsPrints(){
+    ArrayList<String> output = new ArrayList<String>();
+    String input = "";
+    String fromKey = ipAddress + ":" + portNumber;
+
+    HashMap<String, Integer> currentRouterDV = distanceVector.get(fromKey);
+
+      Set<String> toNodeSet = currentRouterDV.keySet();
+      ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
+
+      for(int j = 0; j < toNodes.size(); j++){
+        String toKey = toNodes.get(j);
+        int cost = currentRouterDV.get(toKey);
+        input = toKey + " " + cost;
+        output.add(input);
+      }
+    
+    return output;
+  }
 
    
    // returns current cost from one node to another
