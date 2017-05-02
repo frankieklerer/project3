@@ -36,11 +36,12 @@ public class acceptingDVThread implements Runnable{
 			// starts a server socket to communicate
 		   	DatagramSocket serverSocket = new DatagramSocket(this.portNumber);
 		 
-			byte[] receiveData = new byte[1024];
-			byte[] sendData = new byte[1024];
+			
 
 
 			while(true){
+				byte[] receiveData = new byte[1024];
+				byte[] sendData = new byte[1024];
 
 				// accepting thread receives a packet
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
@@ -94,6 +95,7 @@ public class acceptingDVThread implements Runnable{
 		// split message up
 		String[] data = sentence.split("//");
 		String packetType = data[0];
+		//System.out.println("DATA0= " + Arrays.toString(data));
 	
 		// if the message is just a message from a router
 		if(packetType.equals("MSG")){
@@ -106,7 +108,7 @@ public class acceptingDVThread implements Runnable{
 		// else if the message is a distance vector update
 		}else if(packetType.equals("DVU")){
 
-			System.out.println("Router " + this.ipAddress + " has received a distance vector update.");
+			//System.out.println("Router " + this.ipAddress + " has received a distance vector update.");
 			// syntax is "from:ip:port to:ip:port:cost ..."
 
 			// for every node in the update
@@ -144,8 +146,8 @@ public class acceptingDVThread implements Runnable{
 			//System.out.println(Arrays.toString(changeInfo));
 			String fromKey = changeInfo[0] + ":" + changeInfo[1];
 			String toKey = changeInfo[2] + ":" + changeInfo[3];
-			int newcost = (int)Integer.parseInt(changeInfo[4]);
-			System.out.println("new weight to neighbor " + toKey + " of " + newcost );
+			Integer newcost = Integer.parseInt(changeInfo[4].trim());
+			System.out.println("new weight update from nieghbor " + fromKey + " to " + toKey + " of " + newcost );
 
 			changes = instanceRouter.checkDVforChanges(fromKey, toKey, newcost);
 			//if true send dv update to nieghbors

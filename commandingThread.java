@@ -89,7 +89,7 @@ public class commandingThread implements Runnable{
 								byte[] receiveData = new byte[1024];
 								String data = "WU//";
 								data = data + srcData + dstData;
-								
+								System.out.println("SENDING DATA: " + data);
 								sendData = data.getBytes();
 								DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, neighborPort);
 								clientSocket.send(sendPacket);

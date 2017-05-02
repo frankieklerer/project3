@@ -4,6 +4,7 @@ import java.net.*;
 import java.lang.*;
 
 
+
 /**
 * The router class responsibe for updating 
 **/
@@ -62,10 +63,19 @@ public class router {
         Thread cthread = new Thread(commandThread);
         cthread.start();
 
-        long timerVar = 5000; //5 seconds
+        long timerVar = 500; //5 seconds
         Timer timer = new Timer();
        // timer.scheduleAtFixedRate(new sendingDVThread(routerStatic),0,timerVar);
-        
+
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                sendingThread.sendDVUpdate();
+            }
+        }, 0, timerVar);
+       
+
 	}
 
 	 public router(String[] args){
