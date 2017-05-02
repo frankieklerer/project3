@@ -67,12 +67,12 @@ public class router {
         Timer timer = new Timer();
        // timer.scheduleAtFixedRate(new sendingDVThread(routerStatic),0,timerVar);
 
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                sendingThread.sendDVUpdate();
-            }
-        }, 0, timerVar);
+        // timer.schedule(new TimerTask() {
+        //     @Override
+        //     public void run() {
+        //         sendingThread.sendDVUpdate();
+        //     }
+        // }, 0, timerVar);
       
 	}
 
@@ -154,10 +154,31 @@ public class router {
       
       // if the router already contains the node in their distance vector, check if they can updae the cost
       }else{
+          int currentWeightToDST = currentRouterDV.get(toKey);
+
+          if((currentWeightToDST < totalNewWeight) && forwardingTable.get(toKey).equals(fromKey) )
+          {
+              currentRouterDV.put(toKey, totalNewWeight);
+              changes = true;
+              Set<String> forwardingNodes = currentRouterDV.keySet();
+              ArrayList<String> forwardingNodeList = new ArrayList<String>(forwardingNodes);
+              for(int z = 0; z < forwardingNodeList.size(); z++)
+              { 
+                String tempKey = forwardingNodeList.get(z);
+                if(tempKey.equals(fromKey))
+                {
+                  HashMap<String, Integer> tempDVinfo = distanceVector.get(fromKey);
+                  int partWeight= (int)tempDVinfo.get(z);
+                  int tempweight = currentRouterDV.get(fromKey)+partWeight;
+                  currentRouterDV.put(forwardingNodeList.get(z),tempweight);
+                  changes = true;
+                }
+              }
+ //check if anything else in A's DV can get to toKEY in less then total new weight
+          }
 
           // if the posssible new cost is less than the current cost
-          if(totalNewWeight < currentRouterDV.get(toKey)){
-
+          else if((currentWeightToDST < totalNewWeight) && !(forwardingTable.get(toKey).equals(fromKey))){
             // update the cost
             currentRouterDV.put(toKey, totalNewWeight);
             changes = true;
