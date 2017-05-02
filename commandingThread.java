@@ -151,30 +151,39 @@ public class commandingThread implements Runnable{
 		
 	}
 
-	// method to parse packet receive to analyze message in morder to determine how to nperform necessary oprtations
-	public void parsePacket(String sentence){
+		// method to parse packet receive to analyze message in morder to determine how to nperform necessary oprtations
+	public boolean parsePacket(String sentence){
 
 		boolean changes = false;
+
 		// split message up
 		String[] data = sentence.split("//");
 		String packetType = data[0];
+		//System.out.println("DATA0= " + Arrays.toString(data));
+	
+		// if the message is just a message from a router
+		if(packetType.equals("MSG")){
 
-		if(packetType.equals("DVU")){
+		System.out.println("Message " + data[1] + " from " );
 
-			System.out.println("Router " + this.ipAddress + " has received a distance vector update.");
+		// else if the message is a distance vector update
+		}else if(packetType.equals("DVU")){
 
+			//System.out.println("Router " + this.ipAddress + " has received a distance vector update.");
 			// syntax is "from:ip:port to:ip:port:cost ..."
 
 			// for every node in the update
-			for(String temp: data){
+			for(int k = 1; k < data.length-1; k++){
+				String temp = data[k];
 
 				// split each message by node
 				String[] splitNodes = temp.split(" ");
 
 				// from node is the first node, extract its information
 				String[] fromNode = splitNodes[0].split(":");
+
 				String fromKey = fromNode[1] + ":" + fromNode[2];
-				System.out.println("DV update from " + fromKey);
+				System.out.println("new DV update received from " + fromKey + " with the following distances: ");
 
 				// split each node by ip address, port, cost
 				for(int i = 1; i < splitNodes.length; i++){
@@ -182,12 +191,34 @@ public class commandingThread implements Runnable{
 					String[] toNode = splitNodes[i].split(":");
 					String toKey = toNode[1] + ":" + toNode[2];
 					int cost = (int)Integer.parseInt(toNode[3]);
-
+					System.out.println(toKey + " " + cost);
+					
 					// check if THIS router has made any changes to its DV update as a result of the received DV update
 					// if true, must send its DV update to neighbors
 					changes = instanceRouter.checkDVforChanges(fromKey, toKey, cost);
+					
+					//if true, send dv update to neighbors
 				}
 			}
+			
+		// else if the message is a weight update
+		}else if(packetType.equals("WU")){
+			//System.out.println("DATA" + Arrays.toString(data));
+			String[] changeInfo = data[1].split(":");
+			//System.out.println(Arrays.toString(changeInfo));
+			String fromKey = changeInfo[0] + ":" + changeInfo[1];
+			String toKey = changeInfo[2] + ":" + changeInfo[3];
+			Integer newcost = Integer.parseInt(changeInfo[4].trim());
+			System.out.println("new weight update from nieghbor " + fromKey + " to " + toKey + " of " + newcost );
+
+			changes = instanceRouter.checkDVforChanges(fromKey, toKey, newcost);
+			//if true send dv update to nieghbors
+				
+			// change weight in routers distance vector
+			// poisoned reverse ot not
+
 		}
+
+		return changes;
 	}
 }
