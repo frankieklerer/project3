@@ -66,8 +66,10 @@ public class commandingThread implements Runnable{
 					String dstPort = inputList[2];
 					int cost = Integer.parseInt(inputList[3]);
 
-					// ask router if this weight change will cause a change in distance vector
+					// ask router if this weight change will cause a change in distance vector and change the weight in distance vector
 					boolean change = instanceRouter.changeDVCost(dstIP, dstPort, cost);
+
+					// formatting source and destination
 					String dstData = dstIP + ":" + dstPort + ":" + cost;
 					String srcData = ipAddress + ":" + portNumber + ":";
 
