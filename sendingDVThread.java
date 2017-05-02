@@ -35,7 +35,7 @@ public class sendingDVThread implements Runnable {
 
 	// run method that the thread operates
 	public void run() {
-		//this.sendDVUpdate();
+		this.sendDVUpdate();
 	}
 
 	//must send dv update to all neighbors

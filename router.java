@@ -65,7 +65,7 @@ public class router {
 
         long timerVar = 500; //5 seconds
         Timer timer = new Timer();
-       // timer.scheduleAtFixedRate(new sendingDVThread(routerStatic),0,timerVar);
+        //timer.scheduleAtFixedRate(new sendingDVThread(routerStatic),0,timerVar);
 
         // timer.schedule(new TimerTask() {
         //     @Override
@@ -83,11 +83,12 @@ public class router {
 
         // assigning the first argument to global variable
         this.poisonedReverse = Integer.parseInt(args[0]);
-
+        
+        this.forwardingTable = new HashMap<String, String>();
         // initializing the global array list from the method
         this.neighborTable = this.readFile(args[1]);
 
-        this.forwardingTable = new HashMap<String, String>();
+        
         //System.out.println(this.neighborTable);
 	 }
 
