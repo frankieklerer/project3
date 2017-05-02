@@ -49,7 +49,7 @@ public class router {
         athread.start();
 
         //Creating an object of the Sending thread
-        sendingDVThread sendingThread = new sendingDVThread(routerStatic);
+         final sendingDVThread sendingThread = new sendingDVThread(routerStatic);
 
         //Starting the sending thread
         Thread sthread = new Thread(sendingThread);
@@ -70,7 +70,7 @@ public class router {
 
             @Override
             public void run() {
-                sThread.sendDVUpdate();
+                sendingThread.sendDVUpdate();
             }
 
         }, 0, timerVar);
