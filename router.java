@@ -3,11 +3,6 @@ import java.io.*;
 import java.net.*;
 import java.lang.*;
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> bc7e99d1f1dd90e3212c4c3b1c51a001f8247a3b
 /**
 * The router class responsibe for updating 
 **/
@@ -74,8 +69,9 @@ public class router {
 
             @Override
             public void run() {
-                sendingThread.sendDVUpdate();
+                sThread.sendDVUpdate();
             }
+
         }, 0, timerVar);
        
 
