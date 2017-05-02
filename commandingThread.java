@@ -139,7 +139,7 @@ public class commandingThread implements Runnable{
 						InetAddress IPAddress = InetAddress.getByName(finaldstIP);
 						byte[] sendData = new byte[1024];
 						byte[] receiveData = new byte[1024];
-						String data = "MSG//" + message;
+						String data = "MSG//" + message + instanceRouter.getRouterKey();
 						sendData = data.getBytes();
 						DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, dstPort);
 						clientSocket.send(sendPacket);

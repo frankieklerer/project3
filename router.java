@@ -291,8 +291,9 @@ public class router {
                 tempRouterInfo.add(tempCost);
                
                 String toKey = tempIP + ":" + tempPort;
-
+                forwardingTable.put(toKey,toKey);
                 dv.put(toKey, Integer.parseInt(tempCost));
+
                 
 
                 // add arraylist to bigger arraylist
@@ -411,6 +412,11 @@ public class router {
   // returns routers port number
 	public String getRouterPort(){
   	return this.portNumber;
+  }
+
+  public String getRouterKey(){
+    String r = this.ipAddress + ":" + this.portNumber;
+    return r;
   }
 
   // returns routers neighbor table
