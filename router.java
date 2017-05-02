@@ -29,6 +29,7 @@ public class router {
     // a hashmap that maps the from IP/Port to another hashmap which maps the to IP/Port to the cost associated with the from to 
 	private static HashMap<String, HashMap<String,Integer>> distanceVector;
 
+  private static HashMap<String, String> forwardingTable;
 
 	public static void main(String[] args){
 		 
@@ -89,6 +90,7 @@ public class router {
         // initializing the global array list from the method
         this.neighborTable = this.readFile(args[1]);
 
+        this.forwardingTable = new HashMap<String, String>();
         //System.out.println(this.neighborTable);
 
 	 }
@@ -136,7 +138,7 @@ public class router {
       
       // if the router odes not contain the node in its distance vector (not a neighbor)
      if(!(currentRouterDV.containsKey(toKey))){
-
+          forwardingTable.put(toKey, fromKey);
           currentRouterDV.put(toKey, totalNewWeight);
           changes = true;
       
@@ -149,6 +151,7 @@ public class router {
             // update the cost
             currentRouterDV.put(toKey, totalNewWeight);
             changes = true;
+            forwardingTable.put(toKey, fromKey);
             System.out.println("ROUTER " + this.ipAddress + ":" + this.portNumber + " has changed its route to " + toKey);
           }
 
@@ -250,25 +253,22 @@ public class router {
 		ArrayList<String> output = new ArrayList<String>();
 		String input = "";
 
-		Set<String> fromKeySet = distanceVector.keySet();
-		ArrayList<String> fromNodes = new ArrayList<String>(fromKeySet);
+    String routerKey = this.ipAddress + ":" + this.portNumber;
+		
+		HashMap<String, Integer> currentRouterDV = distanceVector.get(routerKey);
 
-		for(int i = 0; i < fromNodes.size(); i++){
-			String fromKey = fromNodes.get(i);
-			HashMap<String, Integer> toKeySet = distanceVector.get(fromKey);
+		input = "from:" + routerKey;
 
-			input = "from:" + fromKey;
+		Set<String> toNodeSet = currentRouterDV.keySet();
+		ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
 
-			Set<String> toNodeSet = toKeySet.keySet();
-			ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
-
-			for(int j = 0; j < toNodes.size(); j++){
-				String toKey = toNodes.get(j);
-				int cost = toKeySet.get(toKey);
-				input = input + " to:" + toKey + ":" + cost;
-			}
-		output.add(input);
+		for(int j = 0; j < toNodes.size(); j++){
+			String toKey = toNodes.get(j);
+			int cost = currentRouterDV.get(toKey);
+			input = input + " to:" + toKey + ":" + cost;
+      output.add(input);
 		}
+		
 		return output;
 	}
 
