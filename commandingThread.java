@@ -65,6 +65,7 @@ public class commandingThread implements Runnable{
 					String dstIP = inputList[1];
 					String dstPort = inputList[2];
 					int cost = Integer.parseInt(inputList[3]);
+
 					// ask router if this weight change will cause a change in distance vector
 					boolean change = instanceRouter.changeDVCost(dstIP, dstPort, cost);
 					String dstData = dstIP + ":" + dstPort + ":" + cost;
@@ -88,7 +89,9 @@ public class commandingThread implements Runnable{
 								byte[] sendData = new byte[1024];
 								byte[] receiveData = new byte[1024];
 								String data = "WU//";
-								data = data + srcData + dstData;
+								data += srcData + dstData;
+
+								// format: WU//fromIP:fromPort:
 								
 								sendData = data.getBytes();
 								DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, neighborPort);
