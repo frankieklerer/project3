@@ -32,7 +32,7 @@ public class router {
 
 	public static void main(String[] args){
 		 
-		if(args.length<2){
+		    if(args.length<2){
             System.out.println("The parameter needs 2 arguments: whether the router uses Poisioned Reverse or not (a 0 or a 1) and the text file which specifies the routers direct neighbors and the cost");
             System.exit(1);
         }
@@ -50,7 +50,7 @@ public class router {
         athread.start();
 
         //Creating an object of the Sending thread
-         final sendingDVThread sendingThread = new sendingDVThread(routerStatic);
+        final sendingDVThread sendingThread = new sendingDVThread(routerStatic);
 
         //Starting the sending thread
         Thread sthread = new Thread(sendingThread);
