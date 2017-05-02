@@ -107,7 +107,7 @@ public class acceptingDVThread implements Runnable{
 		// if the message is just a message from a router
 		if(packetType.equals("MSG")){
 
-		System.out.println("Message " + data[1] + " from " );
+		System.out.println("Message received: " + data[1] );
 
 		// else if the message is a distance vector update
 		}else if(packetType.equals("DVU")){

@@ -121,11 +121,22 @@ public class commandingThread implements Runnable{
 					String dstIP = inputList[1];
 					Integer dstPort = Integer.parseInt(inputList[2]);
 					String message = inputList[3];
-					
+					String forwardKey = dstIP + ":" + dstPort;
+					String finaldstIP = dstIP;
+					if(instanceRouter.hasRouteto(forwardKey))
+					{
+						String finaldstKey = instanceRouter.getForwardingKeyto(forwardKey);
+						String[] keysplit = finaldstKey.split(":");
+						finaldstIP = keysplit[0];
+					}
+					else
+					{
+						System.out.println("Router is not connected to " + forwardKey);
+					}
 					//send message?
 					try{
 						DatagramSocket clientSocket = new DatagramSocket();
-						InetAddress IPAddress = InetAddress.getByName(dstIP);
+						InetAddress IPAddress = InetAddress.getByName(finaldstIP);
 						byte[] sendData = new byte[1024];
 						byte[] receiveData = new byte[1024];
 						String data = "MSG//" + message;
@@ -163,8 +174,10 @@ public class commandingThread implements Runnable{
 	
 		// if the message is just a message from a router
 		if(packetType.equals("MSG")){
+			String message = data[1];
 
-		System.out.println("Message " + data[1] + " from " );
+
+		System.out.println("Message " + message + " from " );
 
 		// else if the message is a distance vector update
 		}else if(packetType.equals("DVU")){

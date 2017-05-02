@@ -132,15 +132,24 @@ public class router {
    public boolean checkDVforChanges(String fromKey, String toKey, int newWeight){   
       boolean changes = false;
       String routerCurrentKey = ipAddress + ":" + portNumber;
-
-  		// do not change anything is the from key is equal to the from key
-      if(toKey.equals(routerCurrentKey) || fromKey.equals(routerCurrentKey)){
-          return false;
-      }
-
       // get the routers distance vector
       HashMap<String, Integer> currentRouterDV = distanceVector.get(routerCurrentKey);
       
+  		// do not change anything is the from key is equal to the from key
+      if(toKey.equals(routerCurrentKey))
+      {
+          if(currentRouterDV.containsKey(fromKey) && (currentRouterDV.get(fromKey) != newWeight))
+          {
+            currentRouterDV.put(fromKey, newWeight);
+          }
+          return false;
+      } 
+      else if(fromKey.equals(routerCurrentKey))
+      {
+          return false;
+      }
+
+     
       int costToNode = currentRouterDV.get(fromKey);
 
       // possible new weight
@@ -155,26 +164,47 @@ public class router {
       // if the router already contains the node in their distance vector, check if they can updae the cost
       }else{
           int currentWeightToDST = currentRouterDV.get(toKey);
+          int leastCostPath = totalNewWeight;
+          String tempLCPKey = "";
 
           if((currentWeightToDST < totalNewWeight) && forwardingTable.get(toKey).equals(fromKey) )
           {
               currentRouterDV.put(toKey, totalNewWeight);
               changes = true;
-              Set<String> forwardingNodes = currentRouterDV.keySet();
-              ArrayList<String> forwardingNodeList = new ArrayList<String>(forwardingNodes);
-              for(int z = 0; z < forwardingNodeList.size(); z++)
+              Set<String> currentToNodes = currentRouterDV.keySet();
+              ArrayList<String> currentToNodeList = new ArrayList<String>(currentToNodes);
+              for(int z = 0; z < currentToNodeList.size(); z++)
               { 
-                String tempKey = forwardingNodeList.get(z);
+                String tempKey = forwardingTable.get(currentToNodeList.get(z));
                 if(tempKey.equals(fromKey))
                 {
                   HashMap<String, Integer> tempDVinfo = distanceVector.get(fromKey);
                   int partWeight= (int)tempDVinfo.get(z);
                   int tempweight = currentRouterDV.get(fromKey)+partWeight;
-                  currentRouterDV.put(forwardingNodeList.get(z),tempweight);
+                  currentRouterDV.put(tempKey,tempweight);
                   changes = true;
                 }
+
+                if(hasRouteAtoB(tempKey, toKey))
+                {
+                  int temp1 = currentRouterDV.get(tempKey);
+                  int temp2 = routeCostAtoB(tempKey, toKey);
+                  int totalPossibleCost = temp1 + temp2;
+  
+                  if(totalPossibleCost < leastCostPath)
+                  {
+                    leastCostPath = totalPossibleCost;
+                    tempLCPKey = tempKey;
+                  }
+                }
               }
- //check if anything else in A's DV can get to toKEY in less then total new weight
+
+            if(leastCostPath != totalNewWeight)
+            {
+              currentRouterDV.put(toKey, leastCostPath);
+              changes = true;
+              forwardingTable.put(toKey, tempLCPKey);
+            }
           }
 
           // if the posssible new cost is less than the current cost
@@ -328,6 +358,44 @@ public class router {
   public void cost(String fromIP, int fromPort, String toIP, int toPort){
   	//distanceVector
 
+  }
+
+  public boolean hasRouteto(String toKey)
+  {
+    return forwardingTable.containsKey(toKey);
+  }
+
+  public boolean hasRouteAtoB(String fromKey, String toKey)
+  {
+    boolean returnVal = false;
+     HashMap<String, Integer> tempDV = distanceVector.get(fromKey);
+     Set<String> toNodeSet = tempDV.keySet();
+     ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
+     for(int i = 0; i < toNodes.size(); i++)
+     {
+      if(toNodes.get(i).equals(toKey))
+        returnVal = true;
+     }
+     return returnVal;
+  }
+
+  public int routeCostAtoB(String fromKey, String toKey)
+  {
+     int cost = -100;
+     HashMap<String, Integer> tempDV = distanceVector.get(fromKey);
+     Set<String> toNodeSet = tempDV.keySet();
+     ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
+     for(int i = 0; i < toNodes.size(); i++)
+     {
+      if(toNodes.get(i).equals(toKey))
+        cost = tempDV.get(toKey);
+     }
+     return cost;
+  }
+
+  public String getForwardingKeyto(String toKey)
+  {
+    return forwardingTable.get(toKey);
   }
 
   // returns routers hashmpa
