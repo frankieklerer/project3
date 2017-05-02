@@ -3,8 +3,6 @@ import java.io.*;
 import java.net.*;
 import java.lang.*;
 
-
-
 /**
 * The router class responsibe for updating 
 **/
@@ -72,11 +70,11 @@ public class router {
 
             @Override
             public void run() {
-                sendingThread.sendDVUpdate();
+                sThread.sendDVUpdate();
             }
-        }, 0, timerVar);
-       
 
+        }, 0, timerVar);
+      
 	}
 
 	 public router(String[] args){
@@ -92,23 +90,34 @@ public class router {
 
         this.forwardingTable = new HashMap<String, String>();
         //System.out.println(this.neighborTable);
-
 	 }
 
    
 	// method that updates the cost between two nodes
 	 public boolean changeDVCost(String dstIP, String dstPort, int newWeight){   
 	        boolean change = false;
+
+          // source node and its distance vector
 	        String fromKey = ipAddress + ":" + portNumber;
 	        HashMap<String, Integer> sourceDV = distanceVector.get(fromKey);
+
+          // to node
 	        String toKey = dstIP + ":" + dstPort;
 
+          // current weight from the source node to destination node
 	        Integer currentWeight = sourceDV.get(toKey);
+
+          // if the weights are different, boolean variable it true
 	        if(currentWeight != newWeight) {
 	      	  change = true;
 	        }
+
+          // update the source nodes weight with new cost
 	        sourceDV.put(toKey, newWeight);
+
+          // update distance vector
 	        distanceVector.put(fromKey, sourceDV);
+          
 	        System.out.println("new dv calculated: ");
           ArrayList<String> toPrintDV = this.toStringforAmirsPrints();
           for(int i = 0; i < toPrintDV.size(); i++){
