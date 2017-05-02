@@ -35,9 +35,6 @@ public class acceptingDVThread implements Runnable{
 			
 			// starts a server socket to communicate
 		   	DatagramSocket serverSocket = new DatagramSocket(this.portNumber);
-		 
-			
-
 
 			while(true){
 				byte[] receiveData = new byte[1024];
@@ -53,10 +50,11 @@ public class acceptingDVThread implements Runnable{
 			
 				boolean changed = this.parsePacket(incomingMessage);
 
-				
+				// if the message received changes the distance vector
 				if(changed){
 
-				ArrayList<ArrayList<String>> neighborTable = instanceRouter.getNeighborTable();
+					// for every neighbor
+					ArrayList<ArrayList<String>> neighborTable = instanceRouter.getNeighborTable();
 
 					for(ArrayList<String> neighborRouterInfo: neighborTable){
 
@@ -68,21 +66,29 @@ public class acceptingDVThread implements Runnable{
 						for(String tempRouterInfo : distanceVectors){
 							data += tempRouterInfo + "//";
 						}
+
+						// send them the Dv update
 						sendData = data.getBytes();
 						DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, port);
 						serverSocket.send(sendPacket);
 						System.out.println("from accepting state, sent " + data);
 					}
+
+				// if the message does not change the distance vector
 				}else{
+
+						// send a blank message
 						String data = "";
-					    sendData = data.getBytes();
-					    InetAddress IPAddress = receivePacket.getAddress();
+					  sendData = data.getBytes();
+					  InetAddress IPAddress = receivePacket.getAddress();
 						int port = receivePacket.getPort();
 						DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, port);
 						serverSocket.send(sendPacket);
 						//System.out.println("from accepting state, sent " + data);
 				}
 			}
+
+		// catch any exception if something goes wrong in the reader
 		}catch(IOException ioe){
 		    System.out.println("Exception: " + ioe + " caught in accepting thread of router " + this.ipAddress);
 		 }
@@ -92,6 +98,7 @@ public class acceptingDVThread implements Runnable{
 	public boolean parsePacket(String sentence){
 
 		boolean changes = false;
+
 		// split message up
 		String[] data = sentence.split("//");
 		String packetType = data[0];
@@ -100,10 +107,7 @@ public class acceptingDVThread implements Runnable{
 		// if the message is just a message from a router
 		if(packetType.equals("MSG")){
 
-			System.out.println("Message " + data[1] + " from " );
-
-
-
+		System.out.println("Message " + data[1] + " from " );
 
 		// else if the message is a distance vector update
 		}else if(packetType.equals("DVU")){
@@ -131,6 +135,7 @@ public class acceptingDVThread implements Runnable{
 					String toKey = toNode[1] + ":" + toNode[2];
 					int cost = (int)Integer.parseInt(toNode[3]);
 					System.out.println(toKey + " " + cost);
+					
 					// check if THIS router has made any changes to its DV update as a result of the received DV update
 					// if true, must send its DV update to neighbors
 					changes = instanceRouter.checkDVforChanges(fromKey, toKey, cost);

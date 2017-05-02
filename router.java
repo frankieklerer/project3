@@ -24,9 +24,10 @@ public class router {
     // an Array List where each index stores an Array List which contains IP address, port number and direct cost of known routers
 	private static ArrayList<ArrayList<String>> neighborTable;
 
-    // a hashmap that maps the from IP/Port to another hashmap which maps the to IP/Port to the cost associated with the from to 
+  // a hashmap that maps the from IP/Port to another hashmap which maps the to IP/Port to the cost associated with the from to 
 	private static HashMap<String, HashMap<String,Integer>> distanceVector;
 
+  // forwarding table for router so router knows where to send the packet to
   private static HashMap<String, String> forwardingTable;
 
 	public static void main(String[] args){
@@ -67,12 +68,10 @@ public class router {
        // timer.scheduleAtFixedRate(new sendingDVThread(routerStatic),0,timerVar);
 
         timer.schedule(new TimerTask() {
-
             @Override
             public void run() {
                 sendingThread.sendDVUpdate();
             }
-
         }, 0, timerVar);
       
 	}
@@ -94,7 +93,7 @@ public class router {
 
    
 	// method that updates the cost between two nodes
-	 public boolean changeDVCost(String dstIP, String dstPort, int newWeight){   
+	 public boolean updateCost(String dstIP, String dstPort, int newWeight){   
 	        boolean change = false;
 
           // source node and its distance vector
@@ -110,6 +109,8 @@ public class router {
           // if the weights are different, boolean variable it true
 	        if(currentWeight != newWeight) {
 	      	  change = true;
+
+            // ** needs to recalculate distance vector
 	        }
 
           // update the source nodes weight with new cost
@@ -176,16 +177,16 @@ public class router {
           toInsert.put(toKey, newWeight);
           distanceVector.put(fromKey, toInsert);
       }
-      if(changes)
-      {
+
+      if(changes){
           System.out.println("new dv calculated: ");
           ArrayList<String> toPrintDV = this.toStringforAmirsPrints();
           for(int i = 0; i < toPrintDV.size(); i++){
               System.out.println(toPrintDV.get(i));
           }
       }
+
       return changes;
-      
   }
 	
 

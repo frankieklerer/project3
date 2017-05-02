@@ -67,7 +67,7 @@ public class commandingThread implements Runnable{
 					int cost = Integer.parseInt(inputList[3]);
 
 					// ask router if this weight change will cause a change in distance vector and change the weight in distance vector
-					boolean change = instanceRouter.changeDVCost(dstIP, dstPort, cost);
+					boolean change = instanceRouter.updateCost(dstIP, dstPort, cost);
 
 					// formatting source and destination
 					String dstData = dstIP + ":" + dstPort + ":" + cost;
