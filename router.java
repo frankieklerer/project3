@@ -441,5 +441,12 @@ public class router {
   public ArrayList<ArrayList<String>> getNeighborTable(){
   	return this.neighborTable;
   }
+
+  public void addNeighborDV(String neighborKey, HashMap<String,Integer> neighborDV)
+  {
+    distanceVector.put(neighborKey, neighborDV);
+  }
+
+
 	
 }

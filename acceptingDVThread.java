@@ -127,7 +127,7 @@ public class acceptingDVThread implements Runnable{
 
 				String fromKey = fromNode[1] + ":" + fromNode[2];
 				System.out.println("new DV update received from " + fromKey + " with the following distances: ");
-
+				HashMap<String,Integer> neighborDV = new HashMap<String,Integer>();
 				// split each node by ip address, port, cost
 				for(int i = 1; i < splitNodes.length; i++){
 
@@ -135,13 +135,14 @@ public class acceptingDVThread implements Runnable{
 					String toKey = toNode[1] + ":" + toNode[2];
 					int cost = (int)Integer.parseInt(toNode[3]);
 					System.out.println(toKey + " " + cost);
-					
+					neighborDV.put(toKey,cost);
 					// check if THIS router has made any changes to its DV update as a result of the received DV update
 					// if true, must send its DV update to neighbors
 					changes = instanceRouter.checkDVforChanges(fromKey, toKey, cost);
 					
 					//if true, send dv update to neighbors
 				}
+				instanceRouter.addNeighborDV(fromKey, neighborDV);
 			}
 			
 		// else if the message is a weight update
