@@ -126,67 +126,50 @@ public class router {
 
           // update distance vector
 	        distanceVector.put(this.routerKey, currentRouterDV);
-          
 
-          //if any nodes in this routers DV router must change and look for better paths
-          int costToNode = currentRouterDV.get(toKey);
-
-           // possible new weight is the new cost plus the cost to the node
-          int totalNewWeight = newWeight + costToNode;
-
-          // current cost to destination from harshmap
-          int currentWeightToDST = currentRouterDV.get(toKey);
-
-          // current least cost path is the total weight
-          int leastCostPath = totalNewWeight;
-          String tempLCPKey = "";
-
+          // gets all the destination nodes in its DV
           Set<String> currentToNodes = currentRouterDV.keySet();
           ArrayList<String> currentToNodeList = new ArrayList<String>(currentToNodes);
+          
+          for(int i = 0; i < currentToNodeList.size(); i++){
 
-          // for every node in its list
-          for(int z = 0; z < currentToNodeList.size(); z++){ 
+            String destKey = currentToNodeList.get(i);
+            String forwardthruKey = forwardingTable.get(destKey);
+            int costToForwardKey = currentRouterDV.get(forwardthruKey);
+            System.out.println("CHECKING for changes from " + destKey + " if uses " + toKey + " as its forwarding key (" + forwardthruKey + ") look for new routes");
+            if(destKey.equals(this.routerKey)){
+              continue;
+            } else if(destKey.equals(toKey)){
 
-          	// get the node it uses to forward to from table
-            String tempKey = forwardingTable.get(currentToNodeList.get(z));
+              // already updates
+              continue;
+            } else if(forwardthruKey.equals(toKey)){
 
-            // if there is a coute from A to B between the two nodes
-            if(hasRouteAtoB(tempKey, toKey)){
+              int costToDestFromForward = routeCostAtoB(forwardthruKey, destKey);
 
-            	// get the current cost from current node to intermedaite node
-              int temp1 = currentRouterDV.get(tempKey);
+              int currentFinalCost = costToForwardKey + costToDestFromForward;
 
-              // get the current ocst from intermedaite node to desintation node
-              int temp2 = routeCostAtoB(tempKey, toKey);
+              ArrayList<String> newPath = this.possibleLeastCostPath(this.routerKey, destKey, forwardthruKey);
+              String newForwardKey = newPath.get(0);
+              int newCost = (int)Integer.parseInt(newPath.get(1));
 
-              // add them
-              int totalPossibleCost = temp1 + temp2;
+              if(newCost < currentFinalCost){
 
-              // if this proposed path is less than the current cost
-              if(totalPossibleCost < leastCostPath){
+                // update the distance vector of the router
+                currentRouterDV.put(destKey, newCost);
 
-              	// update cost
-                leastCostPath = totalPossibleCost;
+                // set this as true
+                change = true;
 
-                // set the new least ccost key
-                tempLCPKey = tempKey;
+                // update the routers forwarding table
+                forwardingTable.put(destKey, newForwardKey);
               }
+
+              // tries to find shorter path through other neighbor
+              
             }
           }
 
-          // if the least cost path is les than the total new weight
-          if(leastCostPath < totalNewWeight){
-
-          	// update the distance vector of the router
-            currentRouterDV.put(toKey, leastCostPath);
-
-            // set this as true
-            change = true;
-
-            // update the routers forwarding table
-            forwardingTable.put(toKey, tempLCPKey);
-          }
-        
 
 	        System.out.println("new dv calculated: ");
           ArrayList<String> toPrintDV = this.toStringforAmirsPrints();
@@ -445,6 +428,43 @@ public class router {
     	}
     }
      return returnVal;
+  }
+
+  public ArrayList<String> possibleLeastCostPath(String sourceKey, String destKey, String currentForwardKey){
+   System.out.println("BEFORE: Router " + sourceKey + " routes thru " + currentForwardKey + " to get to " + destKey);
+
+    HashMap<String, Integer> sourceDV = distanceVector.get(sourceKey);
+    Set<String> toNodeSet = sourceDV.keySet();
+    ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
+    int finalCost = 100000;
+    String finalForwardKey = "";
+
+    for(int i = 0; i < toNodes.size(); i++){
+        String toNodeKey = toNodes.get(i);
+        System.out.println("current to node key " + toNodeKey);
+        if(toNodeKey.equals(this.routerKey)){
+          continue;
+        }
+        else if(toNodeKey.equals(currentForwardKey)){
+          continue;
+        }
+        else{
+          int costToNode = sourceDV.get(toNodeKey);
+          HashMap<String, Integer> forwardKeyDV = distanceVector.get(toNodeKey);
+          System.out.println(forwardKeyDV);
+          int forwardToDstCost = forwardKeyDV.get(destKey);
+          int totalPossibleCost = costToNode + forwardToDstCost;
+          if(totalPossibleCost < finalCost){
+            finalCost = totalPossibleCost;
+            finalForwardKey = toNodeKey;
+          }
+        }
+    }
+    ArrayList<String> returnList = new ArrayList<String>();
+    returnList.add(finalForwardKey);
+    returnList.add(String.valueOf(finalCost));
+    System.out.println("AFTER: Router " + sourceKey + " will route thru " + finalForwardKey + " to get to " + destKey);
+    return returnList;
   }
 
   // method that returns the cost from a to b if there is a route from a to b
