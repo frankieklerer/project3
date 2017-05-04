@@ -34,7 +34,7 @@ public class acceptingDVThread implements Runnable{
 		try{
 			
 			// starts a server socket to communicate
-		   	DatagramSocket serverSocket = new DatagramSocket(this.portNumber);
+		  DatagramSocket serverSocket = new DatagramSocket(this.portNumber);
 
 			while(true){
 				byte[] receiveData = new byte[1024];

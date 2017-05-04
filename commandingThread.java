@@ -117,20 +117,22 @@ public class commandingThread implements Runnable{
 
 				//MSG <dst-ip> <dst-port> <msg> - send message msg to a destination with the specified address.
 				}else if(inputList[0].equals("MSG")){
-
+					// get destination IP and port
 					String dstIP = inputList[1];
 					Integer dstPort = Integer.parseInt(inputList[2]);
-					String message = inputList[3];
 					String forwardKey = dstIP + ":" + dstPort;
 					String finaldstIP = dstIP;
-					if(instanceRouter.hasRouteto(forwardKey))
-					{
+
+					// get the message
+					String message = inputList[3];
+					
+					// if the router has a route key to the destination key
+					if(instanceRouter.hasRouteto(forwardKey)){
+						// get he key
 						String finaldstKey = instanceRouter.getForwardingKeyto(forwardKey);
 						String[] keysplit = finaldstKey.split(":");
 						finaldstIP = keysplit[0];
-					}
-					else
-					{
+					}else{
 						System.out.println("Router is not connected to " + forwardKey);
 					}
 					//send message?
@@ -149,17 +151,13 @@ public class commandingThread implements Runnable{
 						parsePacket(sentence);
 
 						clientSocket.close();
-						}
-					catch(IOException ioe)
-					{
+					}catch(IOException ioe){
 					    //Your error Message here
-					    System.out.println("expection yay");
+					    System.out.println("Exception caught in msg section of commanding thread");
 				    }
 				}
 			}
-
-		}
-		
+		}	
 	}
 
 		// method to parse packet receive to analyze message in morder to determine how to nperform necessary oprtations
