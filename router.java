@@ -341,7 +341,7 @@ public class router {
                 tempRouterInfo.add(tempCost);
                
                 String toKey = tempIP + ":" + tempPort;
-                forwardingTable.put(toKey,toKey);
+                forwardingTable.put(toKey,this.routerKey);
                 dv.put(toKey, Integer.parseInt(tempCost));
 
                 // add arraylist to bigger arraylist
