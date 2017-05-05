@@ -500,11 +500,9 @@ public class router {
   	return this.neighborTable;
   }
 
-  public void addNeighborDV(String neighborKey, HashMap<String,Integer> neighborDV)
-  {
-    distanceVector.put(neighborKey, neighborDV);
+  public void addNeighborDV(String neighborKey, HashMap<String,Integer> neighborDV){
+    this.distanceVector.put(neighborKey, neighborDV);
   }
-
 
 	
 }
