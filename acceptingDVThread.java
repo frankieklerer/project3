@@ -35,7 +35,7 @@ public class acceptingDVThread implements Runnable{
 			
 			// starts a server socket to communicate
 		  DatagramSocket serverSocket = new DatagramSocket(this.portNumber);
-
+		  System.out.println("Accepting thread created");
 			while(true){
 				byte[] receiveData = new byte[1024];
 				byte[] sendData = new byte[1024];
@@ -79,8 +79,8 @@ public class acceptingDVThread implements Runnable{
 
 						// send a blank message
 						String data = "";
-					  sendData = data.getBytes();
-					  InetAddress IPAddress = receivePacket.getAddress();
+					    sendData = data.getBytes();
+					    InetAddress IPAddress = receivePacket.getAddress();
 						int port = receivePacket.getPort();
 						DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, port);
 						serverSocket.send(sendPacket);
