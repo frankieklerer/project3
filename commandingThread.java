@@ -62,8 +62,6 @@ public class commandingThread implements Runnable{
 				if(inputList[0].equals("CHANGE")){
 
 					// get destination IP and port
-					String dstIP = inputList[1];
-					String dstPort = inputList[2];
 					String dstKey = inputList[1] + ":" + inputList[2];
 					int cost = Integer.parseInt(inputList[3]);
 

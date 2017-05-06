@@ -108,7 +108,7 @@ public class acceptingDVThread implements Runnable{
 		// split message up
 		String[] data = sentence.split("//");
 		String packetType = data[0];
-		System.out.println("DATA= " + Arrays.toString(data));
+		//System.out.println("DATA= " + Arrays.toString(data));
 	
 		// if the message is just a message from a router
 		if(packetType.equals("MSG")){
@@ -118,20 +118,21 @@ public class acceptingDVThread implements Runnable{
 		// else if the message is a distance vector update
 		}else if(packetType.equals("DVU")){
 
-			//System.out.println("Router " + this.ipAddress + " has received a distance vector update.");
+			System.out.println("Router " + this.ipAddress + " has received a distance vector update.");
 			// syntax is "from:ip:port to:ip:port:cost ..."
 
 			// for every node in the update
 			for(int k = 1; k < data.length; k++){
-				String temp = data[k];
+				String temp = data[1];
 
 				// split each message by node
 				String[] splitNodes = temp.split(" ");
+				//System.out.println("nodes " + Arrays.toString(splitNodes));
 
 				// from node is the first node, extract its information
 				String[] fromNode = splitNodes[0].split(":");
-
 				String fromKey = fromNode[1] + ":" + fromNode[2];
+				
 				System.out.println("new DV update received from " + fromKey + " with the following distances: ");
 				HashMap<String,Integer> neighborDV = new HashMap<String,Integer>();
 				// split each node by ip address, port, cost

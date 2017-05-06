@@ -309,10 +309,10 @@ public class router {
 		for(int j = 0; j < toNodes.size(); j++){
 			String toKey = toNodes.get(j);
 			int cost = currentRouterDV.get(toKey);
-			input = input + " to:" + toKey + ":" + cost;
-      output.add(input);
+			input += " to:" + toKey + ":" + cost;
 		}
-		
+		output.add(input);
+
 		return output;
 	}
 
