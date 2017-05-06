@@ -17,6 +17,7 @@ public class router {
 	// every router has a globally unique port number
 	private static String portNumber;
 
+	// this routers key which is the ip address with the port number
   private static String routerKey;
 
   // every router need to know whether they can use Poisoned Reverse or not
@@ -102,7 +103,7 @@ public class router {
 
    
 	// method that updates the cost between two nodes
-	 public boolean updateCost(String dstIP, String dstPort, int newWeight){   
+	 public boolean updateCost(String dstKey, int newWeight){   
 
 	 			 // turns to true if cost if new in distance vector
 	       boolean change = false;
@@ -111,7 +112,7 @@ public class router {
          HashMap<String, Integer> currentRouterDV = distanceVector.get(this.routerKey);
 
           // to node
-	        String toKey = dstIP + ":" + dstPort;
+	        String toKey = dstKey;
 
           // current weight from the source node to destination node
 	        Integer currentWeight = currentRouterDV.get(toKey);
@@ -289,74 +290,7 @@ public class router {
 
       return changes;
   }
-	
 
- 		/**
-    * Method that reads in the neighbors.txt file for each router
-    **/
-    public ArrayList<ArrayList<String>> readFile(String fileName){
-
-        // temporary array list
-        ArrayList<ArrayList<String>> nodeArray = new ArrayList<ArrayList<String>>();
-        HashMap<String, Integer> dv = new HashMap<String, Integer>();
-
-        // tells the reader if its the first nline of the text file or not
-        boolean firstLine = true;
-        Scanner scan = null;
-
-        try{
-
-            scan = new Scanner(new FileReader(fileName));
-
-            while(scan.hasNextLine()){
-            
-                // if it is the first line of the text file
-                if(firstLine){
-
-                    String firstStr = scan.nextLine();
-                    String[] myInfo = firstStr.split(" ");
-                    this.ipAddress = myInfo[0];
-                    this.portNumber = myInfo[1];
-
-                    System.out.println("Router has been created with IP address " + this.ipAddress + " and port number " + this.portNumber);
-
-                    // already read first line
-                    firstLine = false;
-                    continue;
-                }
-            
-                // all of its neighbors
-                String finalStr = scan.nextLine();
-
-                // extract node info
-                String[] myNeighbors = finalStr.split(" ");
-                String tempIP = myNeighbors[0];
-                String tempPort = myNeighbors[1];
-                String tempCost = myNeighbors[2];
-
-                // add to an array list
-                ArrayList<String> tempRouterInfo = new ArrayList<String>();
-                tempRouterInfo.add(tempIP);
-                tempRouterInfo.add(tempPort);
-                tempRouterInfo.add(tempCost);
-               
-                String toKey = tempIP + ":" + tempPort;
-                forwardingTable.put(toKey,toKey);
-                dv.put(toKey, Integer.parseInt(tempCost));
-
-                // add arraylist to bigger arraylist
-                nodeArray.add(tempRouterInfo);
-            }
-
-        }catch(Exception e){
-            System.out.println("Could not open file " + e);
-        }
-        
-        this.routerKey = this.ipAddress + ":" + this.portNumber;
-        distanceVector.put(routerKey, dv);
-        System.out.println("Router " + routerKey + " has been intialized with neighbors " + dv);
-        return nodeArray;
-    }
 
   // method that turns the routers distance vector into a readable form
   public ArrayList<String> toStringDV(){
@@ -375,10 +309,10 @@ public class router {
 		for(int j = 0; j < toNodes.size(); j++){
 			String toKey = toNodes.get(j);
 			int cost = currentRouterDV.get(toKey);
-			input = input + " to:" + toKey + ":" + cost;
-      output.add(input);
+			input += " to:" + toKey + ":" + cost;
 		}
-		
+		output.add(input);
+
 		return output;
 	}
 
@@ -511,8 +445,7 @@ public class router {
   }
 
   public String getRouterKey(){
-    String r = this.ipAddress + ":" + this.portNumber;
-    return r;
+    return this.routerKey;
   }
 
   // returns routers neighbor table
@@ -523,6 +456,73 @@ public class router {
   public void addNeighborDV(String neighborKey, HashMap<String,Integer> neighborDV){
     this.distanceVector.put(neighborKey, neighborDV);
   }
+
+  /**
+    * Method that reads in the neighbors.txt file for each router
+    **/
+    public ArrayList<ArrayList<String>> readFile(String fileName){
+
+        // temporary array list
+        ArrayList<ArrayList<String>> nodeArray = new ArrayList<ArrayList<String>>();
+        HashMap<String, Integer> dv = new HashMap<String, Integer>();
+
+        // tells the reader if its the first nline of the text file or not
+        boolean firstLine = true;
+        Scanner scan = null;
+
+        try{
+
+            scan = new Scanner(new FileReader(fileName));
+
+            while(scan.hasNextLine()){
+            
+                // if it is the first line of the text file
+                if(firstLine){
+
+                    String firstStr = scan.nextLine();
+                    String[] myInfo = firstStr.split(" ");
+                    this.ipAddress = myInfo[0];
+                    this.portNumber = myInfo[1];
+                    this.routerKey = this.ipAddress + ":" + this.portNumber;
+
+                    System.out.println("Router has been created with IP address " + this.ipAddress + " and port number " + this.portNumber);
+
+                    // already read first line
+                    firstLine = false;
+                    continue;
+                }
+            
+                // all of its neighbors
+                String finalStr = scan.nextLine();
+
+                // extract node info
+                String[] myNeighbors = finalStr.split(" ");
+                String tempIP = myNeighbors[0];
+                String tempPort = myNeighbors[1];
+                String tempCost = myNeighbors[2];
+
+                // add to an array list
+                ArrayList<String> tempRouterInfo = new ArrayList<String>();
+                tempRouterInfo.add(tempIP);
+                tempRouterInfo.add(tempPort);
+                tempRouterInfo.add(tempCost);
+               
+                String toKey = tempIP + ":" + tempPort;
+                forwardingTable.put(toKey,toKey);
+                dv.put(toKey, Integer.parseInt(tempCost));
+
+                // add arraylist to bigger arraylist
+                nodeArray.add(tempRouterInfo);
+            }
+        }catch(Exception e){
+            System.out.println("Could not open file " + e);
+        }
+        
+        this.routerKey = this.ipAddress + ":" + this.portNumber;
+        distanceVector.put(routerKey, dv);
+        System.out.println("Router " + routerKey + " has been intialized with neighbors " + dv + " and a forwarding table " + this.forwardingTable);
+        return nodeArray;
+    }
 
 	
 }
