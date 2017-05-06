@@ -188,7 +188,6 @@ public class router {
             }
           }
 
-
 	        System.out.println("new dv calculated: ");
           ArrayList<String> toPrintDV = this.toStringforAmirsPrints();
           for(int i = 0; i < toPrintDV.size(); i++){
@@ -199,7 +198,7 @@ public class router {
    }
 
    // method that changes a current routers distance vector after receiving a neighboyrs distance vector
-   public boolean checkDVforChanges(String fromKey, String toKey, int newWeight){ 
+   public boolean checkDVforChanges(String sourceKey, String destKey, int newWeight){ 
 
    		// boolean turns true if there is a change in DV as a result of new weight  
       boolean changes = false;
@@ -208,54 +207,54 @@ public class router {
       HashMap<String, Integer> currentRouterDV = distanceVector.get(routerKey);
       
   		// do not change anything is the from key is equal to the from key
-      if(toKey.equals(routerKey)){
+      if(destKey.equals(this.routerKey)){
 
       		// if the current router contains the from key and not the new weight
-          if(currentRouterDV.containsKey(fromKey) && (currentRouterDV.get(fromKey) != newWeight)){
+          if(currentRouterDV.containsKey(sourceKey) && (currentRouterDV.get(sourceKey) != newWeight)){
 
           	// update the DV
-            currentRouterDV.put(fromKey, newWeight);
+            currentRouterDV.put(sourceKey, newWeight);
           }
           return false;
 
       // if it equals itself
-      } else if(fromKey.equals(routerKey)){
+      } else if(sourceKey.equals(this.routerKey)){
           return false;
       }
 
      
       // cost to node is current cost
-     int costToNode = currentRouterDV.get(fromKey);
+     int costToNode = currentRouterDV.get(sourceKey);
 
       // possible new weight
       int totalNewWeight = newWeight + costToNode;
       
       // if the router odes not contain the node in its distance vector (not a neighbor)
-     if(!(currentRouterDV.containsKey(toKey))){
+     if(!(currentRouterDV.containsKey(destKey))){
 
      	// update the forwarding table
-      forwardingTable.put(toKey, fromKey);
+      forwardingTable.put(destKey, sourceKey);
 
       // update the distance vector
-      currentRouterDV.put(toKey, totalNewWeight);
+      currentRouterDV.put(destKey, totalNewWeight);
       changes = true;
       
       // if the router already contains the node in their distance vector, check if they can updae the cost
       }else{
 
-         int currentWeightToDST = currentRouterDV.get(toKey);
+         int currentWeightToDST = currentRouterDV.get(destKey);
 
           if(totalNewWeight < currentWeightToDST){
 
           // update the cost in DV
-          currentRouterDV.put(toKey, totalNewWeight);
+          currentRouterDV.put(destKey, totalNewWeight);
 
           // set boolean as true
           changes = true;
 
           // update forwardng table
-          forwardingTable.put(toKey, fromKey);
-          System.out.println("ROUTER " + this.ipAddress + ":" + this.portNumber + " has changed its route to " + toKey);
+          forwardingTable.put(destKey, sourceKey);
+          System.out.println("ROUTER " + this.ipAddress + ":" + this.portNumber + " has changed its route to " + destKey);
           
           //check other nodes to see if update helps
           int leastCostPath = totalNewWeight;
@@ -266,9 +265,9 @@ public class router {
           for(int z = 0; z < currentToNodeList.size(); z++){
 
             String tempKey = forwardingTable.get(currentToNodeList.get(z));
-            if(hasRouteAtoB(tempKey, fromKey)){
+            if(hasRouteAtoB(tempKey, sourceKey)){
               int temp1 = currentRouterDV.get(tempKey);
-              int temp2 = routeCostAtoB(tempKey, fromKey);
+              int temp2 = routeCostAtoB(tempKey, sourceKey);
               int totalPossibleCost = temp1 + temp2;
 
               if(totalPossibleCost < leastCostPath){
@@ -281,20 +280,20 @@ public class router {
           if(leastCostPath < totalNewWeight){
             currentRouterDV.put(tempLCPKey, leastCostPath);
             changes = true;
-            forwardingTable.put(tempLCPKey,fromKey);
+            forwardingTable.put(tempLCPKey,sourceKey);
           }
       	}
     	}
   
       // update the routers entire distance vector 
-      if(distanceVector.containsKey(fromKey)){
-          HashMap<String, Integer> tempFromRouter = distanceVector.get(fromKey);
-          tempFromRouter.put(toKey, newWeight);
-          distanceVector.put(fromKey, tempFromRouter);
+      if(distanceVector.containsKey(sourceKey)){
+          HashMap<String, Integer> tempFromRouter = distanceVector.get(sourceKey);
+          tempFromRouter.put(destKey, newWeight);
+          distanceVector.put(sourceKey, tempFromRouter);
       } else {
           HashMap<String, Integer> toInsert = new HashMap<String, Integer>();
-          toInsert.put(toKey, newWeight);
-          distanceVector.put(fromKey, toInsert);
+          toInsert.put(destKey, newWeight);
+          distanceVector.put(sourceKey, toInsert);
       }
 
       if(changes){
@@ -500,7 +499,6 @@ public class router {
                     String[] myInfo = firstStr.split(" ");
                     this.ipAddress = myInfo[0];
                     this.portNumber = myInfo[1];
-                    this.routerKey = this.ipAddress + ":" + this.portNumber;
 
                     System.out.println("Router has been created with IP address " + this.ipAddress + " and port number " + this.portNumber);
 
