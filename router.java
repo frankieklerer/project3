@@ -22,7 +22,7 @@ public class router {
 
   // every router need to know whether they can use Poisoned Reverse or not
   // if 0 , router does not use PR. if 1, router does use PR.
-	private static int poisonedReverse;
+	private static boolean poisonedReverse = false;
 
   // an Array List where each index stores an Array List which contains IP address, port number and direct cost of known routers
 	private static ArrayList<String> neighborTable;
@@ -38,11 +38,7 @@ public class router {
   **/
 	public static void main(String[] args){
 		 
-		    if(args.length<2){
-            System.out.println("The parameter needs 2 arguments: whether the router uses Poisioned Reverse or not (a 0 or a 1) and the text file which specifies the routers direct neighbors and the cost");
-            System.exit(1);
-        }
-
+        
         // create new router method
         router newRouter = new router(args);
 
@@ -81,22 +77,35 @@ public class router {
         //     }
         // }, 0, timerVar);
       
+      
 	 }
 
    /**
    * Router constructor
    **/
 	 public router(String[] args){
+     
+      // initializes distance vector
+      this.distanceVector = new HashMap<String, HashMap<String, Integer>>();
 
-       // initializes distance vector
-		  this.distanceVector = new HashMap<String, HashMap<String, Integer>>();
-
-      // assigning the first argument to global variable
-      this.poisonedReverse = Integer.parseInt(args[0]);
-      
       this.forwardingTable = new HashMap<String, String>();
       // initializing the global array list from the method
-      this.neighborTable = this.readFile(args[1]);
+
+      if(args.length == 1)
+      {
+        this.neighborTable = this.readFile(args[0]);
+      }
+      else
+      {
+        // assigning the first argument to global variable
+        this.poisonedReverse = true;
+      
+        this.neighborTable = this.readFile(args[1]);
+      }
+
+      
+
+      
 
       //System.out.println(this.neighborTable);
 	 }
