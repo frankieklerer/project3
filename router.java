@@ -355,7 +355,7 @@ public class router {
         String toKey = toNodes.get(j);
         int cost = currentRouterDV.get(toKey);
         input = toKey + " " + cost;
-        output.add(input);
+	        output.add(input);
       }
     
     return output;
@@ -389,36 +389,45 @@ public class router {
      return returnVal;
   }
 
+  // returns the ip address and port number of the node that gives a shorter path by routing through it
   public ArrayList<String> possibleLeastCostPath(String sourceKey, String destKey, String currentForwardKey){
    System.out.println("BEFORE: Router " + sourceKey + " routes thru " + currentForwardKey + " to get to " + destKey);
 
-    HashMap<String, Integer> sourceDV = distanceVector.get(sourceKey);
-    Set<String> toNodeSet = sourceDV.keySet();
-    ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
-    int finalCost = 100000;
-    String finalForwardKey = "";
+	 HashMap<String, Integer> sourceDV = distanceVector.get(sourceKey);
+	 Set<String> toNodeSet = sourceDV.keySet();
+	 ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
+	 int finalCost = 100000;
+	 String finalForwardKey = "";
 
-    for(int i = 0; i < toNodes.size(); i++){
-        String toNodeKey = toNodes.get(i);
-        System.out.println("current to node key " + toNodeKey);
-        if(toNodeKey.equals(this.routerKey)){
-          continue;
-        }
-        else if(toNodeKey.equals(currentForwardKey)){
-          continue;
-        }
-        else{
-          int costToNode = sourceDV.get(toNodeKey);
-          HashMap<String, Integer> forwardKeyDV = distanceVector.get(toNodeKey);
-          System.out.println(forwardKeyDV);
-          int forwardToDstCost = forwardKeyDV.get(destKey);
-          int totalPossibleCost = costToNode + forwardToDstCost;
-          if(totalPossibleCost < finalCost){
-            finalCost = totalPossibleCost;
-            finalForwardKey = toNodeKey;
-          }
-        }
-    }
+	 // for every possible router the source router is connected to
+	 for(int i = 0; i < toNodes.size(); i++){
+
+	 	// get its key
+	 	String toNodeKey = toNodes.get(i);
+	  System.out.println("current to node key " + toNodeKey);
+
+	  // if the possible forward key is the current key or the current forward key, do nothing
+	  if(toNodeKey.equals(this.routerKey)){
+    	continue;
+    }else if(toNodeKey.equals(currentForwardKey)){
+      continue;
+
+    // for all other nodes
+    }else{
+
+    	// get the cost from the source to the destination node
+	    int costToNode = sourceDV.get(toNodeKey);
+	    HashMap<String, Integer> forwardKeyDV = distanceVector.get(toNodeKey);
+	    System.out.println(forwardKeyDV);
+	    int forwardToDstCost = forwardKeyDV.get(destKey);
+	    int totalPossibleCost = costToNode + forwardToDstCost;
+	    if(totalPossibleCost < finalCost){
+	      finalCost = totalPossibleCost;
+	      finalForwardKey = toNodeKey;
+	    }
+	   }
+	  }
+
     ArrayList<String> returnList = new ArrayList<String>();
     returnList.add(finalForwardKey);
     returnList.add(String.valueOf(finalCost));
@@ -427,13 +436,13 @@ public class router {
   }
 
   // method that returns the cost from a to b if there is a route from a to b
-  public int routeCostAtoB(String fromKey, String toKey){
+  public int routeCostAtoB(String sourceKey, String destKey){
 
    // initial cost is something like nifnity
    int cost = -100;
 
    // get the from nodes distance vector
-   HashMap<String, Integer> tempDV = distanceVector.get(fromKey);
+   HashMap<String, Integer> tempDV = distanceVector.get(sourceKey);
    Set<String> toNodeSet = tempDV.keySet();
    ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
 
@@ -441,12 +450,12 @@ public class router {
    for(int i = 0; i < toNodes.size(); i++){
 
    	// get the cost of the desitnation
-    if(toNodes.get(i).equals(toKey))
-      cost = tempDV.get(toKey);
+    if(toNodes.get(i).equals(destKey))
+      cost = tempDV.get(destKey);
    }
-
    // return cost
    return cost;
+
   }
 
   // returns the key destination
@@ -456,7 +465,7 @@ public class router {
 
   // returns routers hashmpa
   public HashMap<String, HashMap<String,Integer>> getDV(){
-        return this.distanceVector;
+ 	 return this.distanceVector;
   }
 
   // returns routers IP address
@@ -478,8 +487,9 @@ public class router {
   	return this.neighborTable;
   }
 
+  // method that replace the value of an existing key and will create it if doesn't exist.
   public void addNeighborDV(String neighborKey, HashMap<String,Integer> neighborDV){
-    this.distanceVector.put(neighborKey, neighborDV);
+  		this.distanceVector.put(neighborKey, neighborDV);
   }
 
   /**
