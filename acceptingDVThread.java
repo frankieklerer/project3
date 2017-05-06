@@ -144,7 +144,7 @@ public class acceptingDVThread implements Runnable{
 
 					int cost = (int)Integer.parseInt(destNode[3]);
 
-					System.out.println(destNode + " " + cost);
+					System.out.println(destKey + " " + cost);
 					neighborDV.put(destKey,cost);
 					// check if THIS router has made any changes to its DV update as a result of the received DV update
 					// if true, must send its DV update to neighbors
@@ -163,8 +163,15 @@ public class acceptingDVThread implements Runnable{
 			String destKey = changeInfo[2] + ":" + changeInfo[3];
 			Integer newcost = Integer.parseInt(changeInfo[4].trim());
 			System.out.println("new weight update from neighbor " + sourceKey + " to " + destKey + " of " + newcost );
-
-			changes = instanceRouter.updateCost(destKey, newcost);
+			if(destKey.equals(instanceRouter.getRouterKey()))
+			{
+				changes = instanceRouter.updateCost(sourceKey, newcost);
+			}
+			else
+			{
+				changes = instanceRouter.updateCost(destKey, newcost);
+			}
+			
 			//if true send dv update to nieghbors
 				
 			// change weight in routers distance vector
