@@ -43,14 +43,16 @@ public class sendingDVThread implements Runnable {
 
 		System.out.println("Router " + this.ipAddress+":"+this.portNumber+ " is sending DV update to neighbors");
  		// fetch the routers neighbor table
-		ArrayList<ArrayList<String>> neighborTable = this.instanceRouter.getNeighborTable();
+		ArrayList<String> neighborTable = this.instanceRouter.getNeighborTable();
 
 		// for every router in its neighbor table, send them an update
-		for(ArrayList<String> neighborRouterInfo: neighborTable){
+		for(String neighborRouterInfo: neighborTable){
 
-			String neighborIP = neighborRouterInfo.get(0);
-			Integer neighborPort = Integer.parseInt(neighborRouterInfo.get(1));
-
+			String[] tempinfo = neighborRouterInfo.split(":");
+			// get neighbors IP and port
+			String neighborIP = tempinfo[0];
+			
+			Integer neighborPort = Integer.parseInt(tempinfo[1]);
 			try{
 
 				//BufferedReader inFromUser =new BufferedReader(new InputStreamReader(System.in));

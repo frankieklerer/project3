@@ -25,7 +25,7 @@ public class router {
 	private static int poisonedReverse;
 
   // an Array List where each index stores an Array List which contains IP address, port number and direct cost of known routers
-	private static ArrayList<ArrayList<String>> neighborTable;
+	private static ArrayList<String> neighborTable;
 
   // a hashmap that maps the from IP/Port to another hashmap which maps the to IP/Port to the cost associated with the from to 
 	private static HashMap<String, HashMap<String,Integer>> distanceVector;
@@ -114,19 +114,36 @@ public class router {
           // to node
 	        String toKey = dstKey;
 
-          // current weight from the source node to destination node
-	        Integer currentWeight = currentRouterDV.get(toKey);
+         
 
-          // if the weights are different, boolean variable it true
-	        if(currentWeight != newWeight) {
-	      	  change = true;  // ** needs to recalculate distance vector
-	        }
+          if(neighborTable.contains(toKey))
+          { 
+            // current weight from the source node to destination node
+            Integer currentWeight = currentRouterDV.get(toKey);
 
-          // update the source nodes weight with new cost
-	        currentRouterDV.put(toKey, newWeight);
+            // if the weights are different, boolean variable it true
+            if(currentWeight != newWeight) {
+              change = true;  // ** needs to recalculate distance vector
+            }
+            // update the source nodes weight with new cost
+            currentRouterDV.put(toKey, newWeight);
 
-          // update distance vector
-	        distanceVector.put(this.routerKey, currentRouterDV);
+            // update distance vector
+            distanceVector.put(this.routerKey, currentRouterDV);
+          }
+          else{
+            String forwardingKey = forwardingTable.get(toKey);
+            Integer partCost = currentRouterDV.get(forwardingKey);
+            Integer finalCost = partCost + newWeight;
+            // update the source nodes weight with new cost
+            currentRouterDV.put(toKey, finalCost);
+
+            // update distance vector
+            distanceVector.put(this.routerKey, currentRouterDV);
+            change = true;
+          }
+
+          
 
           // gets all the destination nodes in its DV
           Set<String> currentToNodes = currentRouterDV.keySet();
@@ -145,7 +162,7 @@ public class router {
               // already updates
               continue;
             } else if(forwardthruKey.equals(toKey)){
-
+              
               int costToDestFromForward = routeCostAtoB(forwardthruKey, destKey);
 
               int currentFinalCost = costToForwardKey + costToDestFromForward;
@@ -457,7 +474,7 @@ public class router {
   }
 
   // returns routers neighbor table
-  public ArrayList<ArrayList<String>> getNeighborTable(){
+  public ArrayList<String> getNeighborTable(){
   	return this.neighborTable;
   }
 
@@ -469,10 +486,10 @@ public class router {
   /**
     * Method that reads in the neighbors.txt file for each router
     **/
-    public ArrayList<ArrayList<String>> readFile(String fileName){
+    public ArrayList<String> readFile(String fileName){
 
         // temporary array list
-        ArrayList<ArrayList<String>> nodeArray = new ArrayList<ArrayList<String>>();
+        ArrayList<String> nodeArray = new ArrayList<String>();
         HashMap<String, Integer> dv = new HashMap<String, Integer>();
 
         // tells the reader if its the first nline of the text file or not
@@ -510,10 +527,8 @@ public class router {
                 String tempCost = myNeighbors[2];
 
                 // add to an array list
-                ArrayList<String> tempRouterInfo = new ArrayList<String>();
-                tempRouterInfo.add(tempIP);
-                tempRouterInfo.add(tempPort);
-                tempRouterInfo.add(tempCost);
+                String tempRouterInfo = tempIP + ":" + tempPort;
+                
                
                 String toKey = tempIP + ":" + tempPort;
                 forwardingTable.put(toKey,toKey);

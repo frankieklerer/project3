@@ -76,12 +76,13 @@ public class commandingThread implements Runnable{
 					if(change){
 
 						// for every neighbor 
-						ArrayList<ArrayList<String>> neighborTable = instanceRouter.getNeighborTable();
-						for(ArrayList<String> neighborRouterInfo: neighborTable){
-
+						ArrayList<String> neighborTable = instanceRouter.getNeighborTable();
+						for(String neighborRouterInfo: neighborTable){
+							String[] tempinfo = neighborRouterInfo.split(":");
 							// get neighbors IP and port
-							String neighborIP = neighborRouterInfo.get(0);
-							Integer neighborPort = Integer.parseInt(neighborRouterInfo.get(1));
+							String neighborIP = tempinfo[0];
+							
+							Integer neighborPort = Integer.parseInt(tempinfo[1]);
 
 							try{
 								// send weight update to neighbor
