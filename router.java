@@ -482,7 +482,6 @@ public class router {
                     String[] myInfo = firstStr.split(" ");
                     this.ipAddress = myInfo[0];
                     this.portNumber = myInfo[1];
-                    this.routerKey = this.ipAddress + ":" + this.portNumber;
 
                     System.out.println("Router has been created with IP address " + this.ipAddress + " and port number " + this.portNumber);
 
