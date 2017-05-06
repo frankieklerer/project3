@@ -155,15 +155,16 @@ public class acceptingDVThread implements Runnable{
 			
 		// else if the message is a weight update
 		}else if(packetType.equals("WU")){
+
 			//System.out.println("DATA" + Arrays.toString(data));
 			String[] changeInfo = data[1].split(":");
 			//System.out.println(Arrays.toString(changeInfo));
 			String sourceKey = changeInfo[0] + ":" + changeInfo[1];
-			String toKey = changeInfo[2] + ":" + changeInfo[3];
+			String destKey = changeInfo[2] + ":" + changeInfo[3];
 			Integer newcost = Integer.parseInt(changeInfo[4].trim());
-			System.out.println("new weight update from neighbor " + sourceKey + " to " + toKey + " of " + newcost );
+			System.out.println("new weight update from neighbor " + sourceKey + " to " + destKey + " of " + newcost );
 
-			changes = instanceRouter.updateCost(toKey, newcost);
+			changes = instanceRouter.updateCost(destKey, newcost);
 			//if true send dv update to nieghbors
 				
 			// change weight in routers distance vector
