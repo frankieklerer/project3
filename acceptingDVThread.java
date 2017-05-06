@@ -60,9 +60,9 @@ public class acceptingDVThread implements Runnable{
 					System.out.println("The received message has changed the routers DV");
 
 					// for every neighbor
-					ArrayList<ArrayList<String>> neighborTable = instanceRouter.getNeighborTable();
+					ArrayList<String> neighborTable = instanceRouter.getNeighborTable();
 
-					for(ArrayList<String> neighborRouterInfo: neighborTable){
+					for(String neighborRouterInfo: neighborTable){
 
 						InetAddress IPAddress = receivePacket.getAddress();
 						int port = receivePacket.getPort();
