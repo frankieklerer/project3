@@ -66,7 +66,7 @@ public class commandingThread implements Runnable{
 
 					// get destination IP and port
 					String dstKey = inputList[1] + ":" + inputList[2];
-					int cost = Integer.parseInt(inputList[3]);
+					int cost = (int)Integer.parseInt(inputList[3]);
 
 					// ask router if this weight change will cause a change in distance vector and change the weight in distance vector
 					boolean change = instanceRouter.updateCost(dstKey, cost);

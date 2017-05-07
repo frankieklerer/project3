@@ -192,6 +192,7 @@ public class acceptingDVThread implements Runnable{
 				}
 				instanceRouter.addNeighborDV(sourceKey, neighborDV);
 			}
+
 			
 		// else if the message is a weight update
 		}else if(packetType.equals("WU")){
@@ -202,23 +203,24 @@ public class acceptingDVThread implements Runnable{
 			String sourceKey = changeInfo[0] + ":" + changeInfo[1];
 			String destKey = changeInfo[2] + ":" + changeInfo[3];
 			Integer newcost = Integer.parseInt(changeInfo[4].trim());
-<<<<<<< HEAD
+
 			System.out.println("new weight update to neighbor " + sourceKey + " to " + destKey + " of " + newcost );
 			if(destKey.equals(instanceRouter.getRouterKey()))
 			{
-=======
+
 			System.out.println("new weight update from neighbor " + sourceKey + " to " + destKey + " of " + newcost );
 			
 			if(destKey.equals(instanceRouter.getRouterKey())){
->>>>>>> 577c92d14af423e4a2f40b831b2d33b4203b4257
 				changes = instanceRouter.updateCost(sourceKey, newcost);
 			}else{
 				changes = instanceRouter.updateCost(destKey, newcost);
 			}
+		  }
 		}
 		return changes;
 	}
 }
+
 
 
 

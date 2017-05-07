@@ -87,7 +87,7 @@ public class router {
         this.poisonedReverse = true;
         this.neighborTable = this.readFile(args[1]);
       }
-<<<<<<< HEAD
+
 
       this.dvUpdatesReceived = new HashMap<String, Integer>();
 
@@ -96,8 +96,6 @@ public class router {
      }
 
       //System.out.println(this.neighborTable);
-=======
->>>>>>> 577c92d14af423e4a2f40b831b2d33b4203b4257
 	 }
 
    
@@ -126,7 +124,7 @@ public class router {
 
             // update distance vector
             distanceVector.put(this.routerKey, currentRouterDV);
-          }else{
+          }else if(!(neighborTable.contains(toKey))){
             String forwardingKey = forwardingTable.get(toKey);
             Integer partCost = currentRouterDV.get(forwardingKey);
             Integer finalCost = partCost + newWeight;
@@ -148,7 +146,7 @@ public class router {
             String destKey = currentToNodeList.get(i);
             String forwardthruKey = forwardingTable.get(destKey);
             int costToForwardKey = currentRouterDV.get(forwardthruKey);
-            System.out.println("CHECKING for changes from " + destKey + " if uses " + toKey + " as its forwarding key (" + forwardthruKey + ") look for new routes");
+           // System.out.println("CHECKING for changes from " + destKey + " if uses " + toKey + " as its forwarding key (" + forwardthruKey + ") look for new routes");
             if(destKey.equals(this.routerKey)){
               continue;
             } else if(destKey.equals(toKey)){
@@ -165,17 +163,17 @@ public class router {
               String newForwardKey = newPath.get(0);
               int newCost = (int)Integer.parseInt(newPath.get(1));
 
-              if(newCost < currentFinalCost){
+             // if(newCost < currentFinalCost){
 
                 // update the distance vector of the router
-                currentRouterDV.put(destKey, newCost);
+                currentRouterDV.put(destKey, currentFinalCost);
 
                 // set this as true
                 change = true;
 
                 // update the routers forwarding table
                 forwardingTable.put(destKey, newForwardKey);
-              }              
+              //}              
             }
           }
           change = true;
@@ -393,8 +391,10 @@ public class router {
 
     	// get the cost from the source to the destination node
 	    int costToNode = sourceDV.get(toNodeKey);
+      if(distanceVector.containsKey(toNodeKey))
+      {
 	    HashMap<String, Integer> forwardKeyDV = distanceVector.get(toNodeKey);
-	    System.out.println(forwardKeyDV);
+	    //System.out.println(forwardKeyDV);
 	    int forwardToDstCost = forwardKeyDV.get(destKey);
 	    int totalPossibleCost = costToNode + forwardToDstCost;
 	    if(totalPossibleCost < finalCost){
@@ -403,7 +403,7 @@ public class router {
 	    }
 	   }
 	  }
-
+  }
     ArrayList<String> returnList = new ArrayList<String>();
     returnList.add(finalForwardKey);
     returnList.add(String.valueOf(finalCost));
