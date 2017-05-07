@@ -66,21 +66,7 @@ public class router {
         
         //Starting the command thread
         Thread cthread = new Thread(commandThread);
-        cthread.start();
-
-        // long timerVar = 5000; //5 seconds
-        // Timer timer = new Timer();
-
-        // //timer.scheduleAtFixedRate(new sendingDVThread(routerStatic),0,timerVar);
-
-        // timer.schedule(new TimerTask() {
-        //     @Override
-        //     public void run() {
-        //         sendingThread.sendDVUpdate();
-        //     }
-        // }, 0, timerVar);
-      
-      
+        cthread.start(); 
 	 }
 
    /**
@@ -94,17 +80,14 @@ public class router {
       this.forwardingTable = new HashMap<String, String>();
       // initializing the global array list from the method
 
-      if(args.length == 1)
-      {
+      if(args.length == 1){
         this.neighborTable = this.readFile(args[0]);
-      }
-      else
-      {
+      }else{
         // assigning the first argument to global variable
         this.poisonedReverse = true;
-      
         this.neighborTable = this.readFile(args[1]);
       }
+<<<<<<< HEAD
 
       this.dvUpdatesReceived = new HashMap<String, Integer>();
 
@@ -113,6 +96,8 @@ public class router {
      }
 
       //System.out.println(this.neighborTable);
+=======
+>>>>>>> 577c92d14af423e4a2f40b831b2d33b4203b4257
 	 }
 
    
@@ -128,10 +113,7 @@ public class router {
           // to node
 	        String toKey = dstKey;
 
-         
-
-          if(neighborTable.contains(toKey))
-          { 
+          if(neighborTable.contains(toKey)){ 
             // current weight from the source node to destination node
             Integer currentWeight = currentRouterDV.get(toKey);
 
@@ -144,8 +126,7 @@ public class router {
 
             // update distance vector
             distanceVector.put(this.routerKey, currentRouterDV);
-          }
-          else{
+          }else{
             String forwardingKey = forwardingTable.get(toKey);
             Integer partCost = currentRouterDV.get(forwardingKey);
             Integer finalCost = partCost + newWeight;
@@ -156,7 +137,6 @@ public class router {
             distanceVector.put(this.routerKey, currentRouterDV);
             change = true;
           }
-
           
 
           // gets all the destination nodes in its DV
@@ -195,20 +175,16 @@ public class router {
 
                 // update the routers forwarding table
                 forwardingTable.put(destKey, newForwardKey);
-              }
-
-              // tries to find shorter path through other neighbor
-              
+              }              
             }
           }
           change = true;
 	        System.out.println("new dv calculated: ");
           ArrayList<String> toPrintDV = this.toStringforAmirsPrints();
           for(int i = 0; i < toPrintDV.size(); i++){
-              System.out.println(toPrintDV.get(i));
-          
+              System.out.println(toPrintDV.get(i));        
           }
-	        return change;
+	     return change;
    }
 
    // method that changes a current routers distance vector after receiving a neighboyrs distance vector
@@ -339,6 +315,7 @@ public class router {
 		return output;
 	}
 
+  // method that parses a nodes distace vetor for a specific program print
   public ArrayList<String> toStringforAmirsPrints(){
     ArrayList<String> output = new ArrayList<String>();
     String input = "";
@@ -359,18 +336,19 @@ public class router {
     return output;
   }
 
-
-  public boolean hasRouteto(String toKey){
-    return this.forwardingTable.containsKey(toKey);
+  // checks is there is a route to the destination key
+  public boolean hasRouteto(String destKey){
+    return this.forwardingTable.containsKey(destKey);
   }
 
-  public boolean hasRouteAtoB(String fromKey, String toKey){
+  // returns true or false depending on if a specific source node has a path to specific destination node
+  public boolean hasRouteAtoB(String sourceKey, String destKey){
 
   	// true if there is a route
     boolean returnVal = false;
 
     // get the from nodes distance vector
-    HashMap<String, Integer> tempDV = distanceVector.get(fromKey);
+    HashMap<String, Integer> tempDV = distanceVector.get(sourceKey);
 
     // where the node goes
     Set<String> toNodeSet = tempDV.keySet();
@@ -380,7 +358,7 @@ public class router {
     for(int i = 0; i < toNodes.size(); i++){
 
     	// if the node goes to the destination key
-    	if(toNodes.get(i).equals(toKey)){
+    	if(toNodes.get(i).equals(destKey)){
         returnVal = true;
     	}
     }
@@ -453,7 +431,6 @@ public class router {
    }
    // return cost
    return cost;
-
   }
 
   // returns the key destination
@@ -475,7 +452,8 @@ public class router {
 	public String getRouterPort(){
   	return this.portNumber;
   }
-
+ 
+  // returns routers key which is ip + port
   public String getRouterKey(){
     return this.routerKey;
   }

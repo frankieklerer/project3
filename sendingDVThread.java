@@ -24,7 +24,6 @@ public class sendingDVThread implements Runnable {
 
 	private HashMap<String,Integer> dvUpdatesReceived;
 
-
 	Timer timer;
 
 	// Constructor
@@ -47,7 +46,6 @@ public class sendingDVThread implements Runnable {
 
 		
 		timeout = ( timerVar / 1000 ) * 3;
-
 
 	}
 	@Override
@@ -153,18 +151,21 @@ public class sendingDVThread implements Runnable {
 
 			sendDVUpdate();
 
-			if(countDown > 0)
-			{
+			if(countDown > 0){
 				countDown--;
-			}
-			else{
+			}else{
 			   // for every neighbor
 			   for(int i = 0; i < neighborTable.size(); i++){
 			   		String currentKey = neighborTable.get(i);
+<<<<<<< HEAD
 			   		if(instanceRouter.getRouterDVUpdates(currentKey) == 0)
 			   		{
 			   			instanceRouter.dropNeighbor(currentKey);
 			   			System.out.println("Neighbor " + currentKey + " dropped");
+=======
+			   		if(dvUpdatesReceived.get(currentKey) == 0){
+			   			//drop neighbor
+>>>>>>> 577c92d14af423e4a2f40b831b2d33b4203b4257
 			   		}
 			   }
 			}
