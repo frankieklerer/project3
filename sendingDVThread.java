@@ -20,6 +20,12 @@ public class sendingDVThread implements Runnable {
 
 	private long timerVar = 5000; //5 seconds
 
+	private ArrayList<String> neighborTable;
+
+	private HashMap<String,Integer> dvUpdatesReceived;
+
+
+	Timer timer;
 
 	// Constructor
 	public sendingDVThread(router r){	
@@ -33,14 +39,20 @@ public class sendingDVThread implements Runnable {
 		// initializing instance of IP address of router
 		this.ipAddress = instanceRouter.getRouterIP();
 
+		this.dvUpdatesReceived = new HashMap<String, Integer>();
+
+		this.neighborTable = instanceRouter.getNeighborTable();
+		timer = new Timer();
+		timer.schedule(new RemindTask(), 0, timerVar);
+
+		for(int i = 0; i < neighborTable.size(); i++){
+			dvUpdatesReceived.put(neighborTable.get(i),0);
+		}
+
 
 	}
-
-	// run method that the thread operates
-	public void run() {
-		this.sendDVUpdate();
-	}
-
+	@Override
+	public void run() {}
 	//must send dv update to all neighbors
 	public void sendDVUpdate(){
 
@@ -115,7 +127,8 @@ public class sendingDVThread implements Runnable {
 
 				String fromKey = fromNode[1] + ":" + fromNode[2];
 				System.out.println("new DV update received from " + fromKey + " with the following distances: ");
-
+				Integer current = dvUpdatesReceived.get(fromKey);
+				dvUpdatesReceived.put(fromKey,current++);
 				// split each node by ip address, port, cost
 				for(int i = 1; i < splitNodes.length; i++){
 
@@ -132,4 +145,30 @@ public class sendingDVThread implements Runnable {
 			}
 		}
 	}
+
+	class RemindTask extends TimerTask {
+		int countDown = 3;
+	 	// run method that the thread operates
+		
+		public void run() {
+
+			sendDVUpdate();
+
+			if(countDown > 0)
+			{
+				countDown--;
+			}
+			else{
+			   // for every neighbor
+			   for(int i = 0; i < neighborTable.size(); i++){
+			   		String currentKey = neighborTable.get(i);
+			   		if(dvUpdatesReceived.get(currentKey) == 0)
+			   		{
+			   			//drop neighbor
+			   		}
+			   }
+			}
+		}
+    }
+
 }

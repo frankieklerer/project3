@@ -77,7 +77,7 @@ public class acceptingDVThread implements Runnable{
 						sendData = data.getBytes();
 						DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length, IPAddress, port);
 						serverSocket.send(sendPacket);
-						System.out.println("from accepting state, sent " + data);
+						System.out.println("from accepting state, sent to " + neighborRouterInfo + ": " + data);
 					}
 
 				// if the message does not change the distance vector
