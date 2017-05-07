@@ -200,7 +200,7 @@ public class commandingThread implements Runnable{
 
 				String fromKey = fromNode[1] + ":" + fromNode[2];
 				System.out.println("new DV update received from " + fromKey + " with the following distances: ");
-
+				instanceRouter.dvUpdateReceived(fromKey);
 				// split each node by ip address, port, cost
 				for(int i = 1; i < splitNodes.length; i++){
 

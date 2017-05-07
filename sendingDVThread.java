@@ -18,8 +18,8 @@ public class sendingDVThread implements Runnable {
 	// port number of the router that the thread is spawning from
 	private int portNumber;
 
-	private long timerVar = 5000; //5 seconds
-
+	private long timerVar = 20000; //10 seconds
+	private long timeout;
 	private ArrayList<String> neighborTable;
 
 	private HashMap<String,Integer> dvUpdatesReceived;
@@ -39,20 +39,20 @@ public class sendingDVThread implements Runnable {
 		// initializing instance of IP address of router
 		this.ipAddress = instanceRouter.getRouterIP();
 
-		this.dvUpdatesReceived = new HashMap<String, Integer>();
+		this.dvUpdatesReceived = instanceRouter.getDVUpdatesReceived();
 
 		this.neighborTable = instanceRouter.getNeighborTable();
 		timer = new Timer();
 		timer.schedule(new RemindTask(), 0, timerVar);
 
-		for(int i = 0; i < neighborTable.size(); i++){
-			dvUpdatesReceived.put(neighborTable.get(i),0);
-		}
+		
+		timeout = ( timerVar / 1000 ) * 3;
 
 
 	}
 	@Override
 	public void run() {}
+
 	//must send dv update to all neighbors
 	public void sendDVUpdate(){
 
@@ -127,8 +127,7 @@ public class sendingDVThread implements Runnable {
 
 				String fromKey = fromNode[1] + ":" + fromNode[2];
 				System.out.println("new DV update received from " + fromKey + " with the following distances: ");
-				Integer current = dvUpdatesReceived.get(fromKey);
-				dvUpdatesReceived.put(fromKey,current++);
+				instanceRouter.dvUpdateReceived(fromKey);
 				// split each node by ip address, port, cost
 				for(int i = 1; i < splitNodes.length; i++){
 
@@ -162,9 +161,10 @@ public class sendingDVThread implements Runnable {
 			   // for every neighbor
 			   for(int i = 0; i < neighborTable.size(); i++){
 			   		String currentKey = neighborTable.get(i);
-			   		if(dvUpdatesReceived.get(currentKey) == 0)
+			   		if(instanceRouter.getRouterDVUpdates(currentKey) == 0)
 			   		{
-			   			//drop neighbor
+			   			instanceRouter.dropNeighbor(currentKey);
+			   			System.out.println("Neighbor " + currentKey + " dropped");
 			   		}
 			   }
 			}

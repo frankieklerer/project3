@@ -33,6 +33,8 @@ public class router {
   // forwarding table for router so router knows where to send the packet to
   private static HashMap<String, String> forwardingTable;
 
+  private HashMap<String,Integer> dvUpdatesReceived;
+
   /**
   * Main method that initializes the router class with threads
   **/
@@ -104,9 +106,11 @@ public class router {
         this.neighborTable = this.readFile(args[1]);
       }
 
-      
+      this.dvUpdatesReceived = new HashMap<String, Integer>();
 
-      
+      for(int i = 0; i < neighborTable.size(); i++){
+        dvUpdatesReceived.put(neighborTable.get(i),0);
+     }
 
       //System.out.println(this.neighborTable);
 	 }
@@ -168,7 +172,7 @@ public class router {
             if(destKey.equals(this.routerKey)){
               continue;
             } else if(destKey.equals(toKey)){
-
+              change = true;
               // already updates
               continue;
             } else if(forwardthruKey.equals(toKey)){
@@ -197,7 +201,7 @@ public class router {
               
             }
           }
-
+          change = true;
 	        System.out.println("new dv calculated: ");
           ArrayList<String> toPrintDV = this.toStringforAmirsPrints();
           for(int i = 0; i < toPrintDV.size(); i++){
@@ -306,14 +310,7 @@ public class router {
           distanceVector.put(sourceKey, toInsert);
       }
 
-      if(changes){
-          System.out.println("new dv calculated: ");
-          ArrayList<String> toPrintDV = this.toStringforAmirsPrints();
-          for(int i = 0; i < toPrintDV.size(); i++){
-              System.out.println(toPrintDV.get(i));
-          }
-      }
-
+ 
       return changes;
   }
 
@@ -437,10 +434,10 @@ public class router {
   }
 
   // method that returns the cost from a to b if there is a route from a to b
-  public int routeCostAtoB(String sourceKey, String destKey){
+  public Integer routeCostAtoB(String sourceKey, String destKey){
 
    // initial cost is something like nifnity
-   int cost = -100;
+   Integer cost = -100;
 
    // get the from nodes distance vector
    HashMap<String, Integer> tempDV = distanceVector.get(sourceKey);
@@ -557,7 +554,53 @@ public class router {
         return nodeArray;
     }
 
-   
+   public void dropNeighbor(String neighborKey)
+   {
+       // gets all the destination nodes in its DV
+      HashMap<String, Integer> currentRouterDV = distanceVector.get(routerKey);
 
+      distanceVector.remove(neighborKey);
+      currentRouterDV.remove(neighborKey);
+      neighborTable.remove(neighborKey);
+  
+      Set<String> currentToNodes = currentRouterDV.keySet();
+      ArrayList<String> currentToNodeList = new ArrayList<String>(currentToNodes);
+      
+      for(int i = 0; i < currentToNodeList.size(); i++){
+
+        String destKey = currentToNodeList.get(i);
+        String forwardthruKey = forwardingTable.get(destKey);
+        if(forwardthruKey.equals(neighborKey))
+        {
+          for(int j = 0; j < neighborTable.size(); j++)
+          {
+            String tempNeighborKey = neighborTable.get(j);
+            if(hasRouteAtoB(tempNeighborKey,destKey))
+            {
+              Integer costToNeighbor = currentRouterDV.get(tempNeighborKey);
+              Integer costToNode = routeCostAtoB(tempNeighborKey,destKey);
+            //  Integer totalCost = costToNeighbor + 
+            }
+          }
+        }
+      }
+      
+
+   }
+   public Integer getRouterDVUpdates(String fromKey)
+   {
+     Integer updates = dvUpdatesReceived.get(fromKey);
+     return updates;
+   }
+
+   public HashMap<String,Integer> getDVUpdatesReceived()
+   {
+    return dvUpdatesReceived;
+   }
 	
+   public void dvUpdateReceived(String fromKey)
+   {
+      Integer current = new Integer(dvUpdatesReceived.get(fromKey) + 1);
+      dvUpdatesReceived.put(fromKey,current);
+   }
 }

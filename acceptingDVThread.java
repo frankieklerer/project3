@@ -54,11 +54,14 @@ public class acceptingDVThread implements Runnable{
 				System.out.println("Router " + this.routerKey +  " has received message " + incomingMessage);
 			
 				boolean changed = this.parsePacket(incomingMessage);
-
+				System.out.println("new dv calculated: ");
+				ArrayList<String> toPrintDV = instanceRouter.toStringforAmirsPrints();
+				for(int i = 0; i < toPrintDV.size(); i++){
+				  	System.out.println(toPrintDV.get(i));
+				}
 				// if the message received changes the distance vector
 				if(changed){
-					System.out.println("The received message has changed the routers DV");
-
+					
 					// for every neighbor
 					ArrayList<String> neighborTable = instanceRouter.getNeighborTable();
 
@@ -172,6 +175,7 @@ public class acceptingDVThread implements Runnable{
 				String[] sourceNode = splitNodes[0].split(":");
 				//System.out.println("received message from " + Arrays.toString(sourceNode));
 				String sourceKey = sourceNode[1] + ":" + sourceNode[2];
+				instanceRouter.dvUpdateReceived(sourceKey);
 
 				System.out.println("new DV update received from " + sourceKey + " with the following distances: ");
 				HashMap<String,Integer> neighborDV = new HashMap<String,Integer>();
@@ -202,7 +206,7 @@ public class acceptingDVThread implements Runnable{
 			String sourceKey = changeInfo[0] + ":" + changeInfo[1];
 			String destKey = changeInfo[2] + ":" + changeInfo[3];
 			Integer newcost = Integer.parseInt(changeInfo[4].trim());
-			System.out.println("new weight update from neighbor " + sourceKey + " to " + destKey + " of " + newcost );
+			System.out.println("new weight update to neighbor " + sourceKey + " to " + destKey + " of " + newcost );
 			if(destKey.equals(instanceRouter.getRouterKey()))
 			{
 				changes = instanceRouter.updateCost(sourceKey, newcost);
