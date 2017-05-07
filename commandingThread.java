@@ -17,6 +17,8 @@ public class commandingThread implements Runnable{
 	// port number of the router that the thread is spawning from
 	private Integer portNumber;
 
+	private String routerKey;
+
 	// constructor
 	public commandingThread(router r){
 		
@@ -28,6 +30,7 @@ public class commandingThread implements Runnable{
 
 		// initializing instance of IP address of router
 		this.ipAddress = instanceRouter.getRouterIP();
+		routerKey = instanceRouter.getRouterKey();
 	}
 
 	// run method that the thread operates
@@ -120,30 +123,32 @@ public class commandingThread implements Runnable{
 					// get destination IP and port
 					String dstIP = inputList[1];
 					Integer dstPort = Integer.parseInt(inputList[2]);
-					String forwardKey = dstIP + ":" + dstPort;
-					String finaldstIP = dstIP;
+					String destKey = dstIP + ":" + dstPort;
+					Integer finaldstPort = dstPort;
+					String finaldstKey = "";
 
 					// get the message
 					String message = inputList[3];
 					
 					// if the router has a route key to the destination key
-					if(instanceRouter.hasRouteto(forwardKey)){
+					if(instanceRouter.hasRouteto(destKey)){
 						// get he key
-						String finaldstKey = instanceRouter.getForwardingKeyto(forwardKey);
+						finaldstKey = instanceRouter.getForwardingKeyto(destKey);
 						String[] keysplit = finaldstKey.split(":");
-						finaldstIP = keysplit[0];
-					}else{
-						System.out.println("Router is not connected to " + forwardKey);
+						finaldstPort = Integer.parseInt(keysplit[1]);
 					}
-					//send message?
+
+
+				   System.out.println("Message " + message + " from " + this.routerKey + " to " + destKey + " forwarded to " + finaldstKey);
+
 					try{
 						DatagramSocket clientSocket = new DatagramSocket();
-						InetAddress IPAddress = InetAddress.getByName(finaldstIP);
+						InetAddress IPAddress = InetAddress.getByName("127.0.0.1");
 						byte[] sendData = new byte[1024];
 						byte[] receiveData = new byte[1024];
-						String data = "MSG//" + message + instanceRouter.getRouterKey();
+						String data = "MSG//" + destKey + "//"+ message + "//"+ instanceRouter.getRouterKey();
 						sendData = data.getBytes();
-						DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, dstPort);
+						DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, finaldstPort);
 						clientSocket.send(sendPacket);
 						DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 						clientSocket.receive(receivePacket);

@@ -112,9 +112,49 @@ public class acceptingDVThread implements Runnable{
 	
 		// if the message is just a message from a router
 		if(packetType.equals("MSG")){
+			String toKey = data[1];
+			String message = data[2];
+			String srcKeys = data[3];
+			String forwardKey = "";
+			String[] toSplit = toKey.split(":");
+			Integer finaldstPort = Integer.parseInt(toSplit[1]);
 
-			System.out.println("Message received: " + data[1] );
+			if(instanceRouter.hasRouteto(toKey))
+			{
+				forwardKey = instanceRouter.getForwardingKeyto(toKey);
+				String[] keysplit = forwardKey.split(":");
+			    finaldstPort = Integer.parseInt(keysplit[1]);
 
+			}
+
+			if(toKey.equals(instanceRouter.getRouterKey()))
+			{
+				System.out.println("Message " + message + " received from " + srcKeys);
+			}
+			else{
+			
+			System.out.println("Message " + message + " from " + srcKeys + " to " + toKey + " forwarded to " + forwardKey);
+
+					try{
+						DatagramSocket clientSocket = new DatagramSocket();
+						InetAddress IPAddress = InetAddress.getByName("127.0.0.1");
+						byte[] sendData = new byte[1024];
+						byte[] receiveData = new byte[1024];
+						String newnewData = "MSG//" + toKey + "//"+ message + "//"+ srcKeys + " " + instanceRouter.getRouterKey();
+						sendData = newnewData.getBytes();
+						DatagramPacket sendPacket =	new DatagramPacket(sendData, sendData.length, IPAddress, finaldstPort);
+						clientSocket.send(sendPacket);
+						DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+						clientSocket.receive(receivePacket);
+						String tempsentence = new String(receivePacket.getData());
+						parsePacket(tempsentence);
+
+						clientSocket.close();
+					}catch(IOException ioe){
+					    //Your error Message here
+					    System.out.println("Exception caught in msg section of commanding thread");
+				    }
+				}
 		// else if the message is a distance vector update
 		}else if(packetType.equals("DVU")){
 
