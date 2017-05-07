@@ -24,7 +24,6 @@ public class sendingDVThread implements Runnable {
 
 	private HashMap<String,Integer> dvUpdatesReceived;
 
-
 	Timer timer;
 
 	// Constructor
@@ -48,7 +47,6 @@ public class sendingDVThread implements Runnable {
 		for(int i = 0; i < neighborTable.size(); i++){
 			dvUpdatesReceived.put(neighborTable.get(i),0);
 		}
-
 
 	}
 	@Override
@@ -154,16 +152,13 @@ public class sendingDVThread implements Runnable {
 
 			sendDVUpdate();
 
-			if(countDown > 0)
-			{
+			if(countDown > 0){
 				countDown--;
-			}
-			else{
+			}else{
 			   // for every neighbor
 			   for(int i = 0; i < neighborTable.size(); i++){
 			   		String currentKey = neighborTable.get(i);
-			   		if(dvUpdatesReceived.get(currentKey) == 0)
-			   		{
+			   		if(dvUpdatesReceived.get(currentKey) == 0){
 			   			//drop neighbor
 			   		}
 			   }

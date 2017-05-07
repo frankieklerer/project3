@@ -119,21 +119,16 @@ public class acceptingDVThread implements Runnable{
 			String[] toSplit = toKey.split(":");
 			Integer finaldstPort = Integer.parseInt(toSplit[1]);
 
-			if(instanceRouter.hasRouteto(toKey))
-			{
+			if(instanceRouter.hasRouteto(toKey)){
 				forwardKey = instanceRouter.getForwardingKeyto(toKey);
 				String[] keysplit = forwardKey.split(":");
 			    finaldstPort = Integer.parseInt(keysplit[1]);
-
 			}
 
-			if(toKey.equals(instanceRouter.getRouterKey()))
-			{
+			if(toKey.equals(instanceRouter.getRouterKey())){
 				System.out.println("Message " + message + " received from " + srcKeys);
-			}
-			else{
-			
-			System.out.println("Message " + message + " from " + srcKeys + " to " + toKey + " forwarded to " + forwardKey);
+			}else{
+				System.out.println("Message " + message + " from " + srcKeys + " to " + toKey + " forwarded to " + forwardKey);
 
 					try{
 						DatagramSocket clientSocket = new DatagramSocket();
@@ -153,8 +148,9 @@ public class acceptingDVThread implements Runnable{
 					}catch(IOException ioe){
 					    //Your error Message here
 					    System.out.println("Exception caught in msg section of commanding thread");
-				    }
+				  }
 				}
+
 		// else if the message is a distance vector update
 		}else if(packetType.equals("DVU")){
 
@@ -203,22 +199,13 @@ public class acceptingDVThread implements Runnable{
 			String destKey = changeInfo[2] + ":" + changeInfo[3];
 			Integer newcost = Integer.parseInt(changeInfo[4].trim());
 			System.out.println("new weight update from neighbor " + sourceKey + " to " + destKey + " of " + newcost );
-			if(destKey.equals(instanceRouter.getRouterKey()))
-			{
+			
+			if(destKey.equals(instanceRouter.getRouterKey())){
 				changes = instanceRouter.updateCost(sourceKey, newcost);
-			}
-			else
-			{
+			}else{
 				changes = instanceRouter.updateCost(destKey, newcost);
 			}
-			
-			//if true send dv update to nieghbors
-				
-			// change weight in routers distance vector
-			// poisoned reverse ot not
-
 		}
-
 		return changes;
 	}
 }
