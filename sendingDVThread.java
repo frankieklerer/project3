@@ -20,6 +20,7 @@ public class sendingDVThread implements Runnable {
 
 	private long timerVar = 5000; //5 seconds
 
+
 	// Constructor
 	public sendingDVThread(router r){	
 
@@ -31,6 +32,8 @@ public class sendingDVThread implements Runnable {
 
 		// initializing instance of IP address of router
 		this.ipAddress = instanceRouter.getRouterIP();
+
+
 	}
 
 	// run method that the thread operates

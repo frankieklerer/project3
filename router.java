@@ -66,9 +66,10 @@ public class router {
         Thread cthread = new Thread(commandThread);
         cthread.start();
 
-        long timerVar = 500; //5 seconds
-        Timer timer = new Timer();
-        //timer.scheduleAtFixedRate(new sendingDVThread(routerStatic),0,timerVar);
+        // long timerVar = 5000; //5 seconds
+        // Timer timer = new Timer();
+
+        // //timer.scheduleAtFixedRate(new sendingDVThread(routerStatic),0,timerVar);
 
         // timer.schedule(new TimerTask() {
         //     @Override
