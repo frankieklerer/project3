@@ -18,7 +18,7 @@ public class sendingDVThread implements Runnable {
 	// port number of the router that the thread is spawning from
 	private int portNumber;
 
-	private long timerVar = 10000; //10 seconds
+	private long timerVar = 5000; //5 seconds
 	private long timeout;
 	private ArrayList<String> neighborTable;
 

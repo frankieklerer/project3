@@ -175,6 +175,7 @@ public class acceptingDVThread implements Runnable{
 
 				System.out.println("new DV update received from " + sourceKey + " with the following distances: ");
 				HashMap<String,Integer> neighborDV = new HashMap<String,Integer>();
+				instanceRouter.addNeighborDV(sourceKey, neighborDV);
 
 				// split each node by ip address, port, cost
 				for(int i = 1; i < splitNodes.length; i++){
@@ -197,9 +198,9 @@ public class acceptingDVThread implements Runnable{
 						changes = true;
 					}
 				}
-				instanceRouter.addNeighborDV(sourceKey, neighborDV);
 
-            
+            	instanceRouter.addNeighborDV(sourceKey, neighborDV);
+
 			}
 
 			

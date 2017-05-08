@@ -48,8 +48,8 @@ public class commandingThread implements Runnable{
 			if(input.equals("PRINT")){
 
 				// fetch the routers distance vector in a readable array list
-				ArrayList<String> toPrintDV = instanceRouter.toStringDV();
-
+				ArrayList<String> toPrintDV = instanceRouter.toStringforAmirsPrints();
+				System.out.println("new dv calculated: ");
 				// for every element in array list, print it out
 				for(int i = 0; i < toPrintDV.size(); i++){
 					System.out.println(toPrintDV.get(i));
