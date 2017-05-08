@@ -18,7 +18,7 @@ public class sendingDVThread implements Runnable {
 	// port number of the router that the thread is spawning from
 	private int portNumber;
 
-	private long timerVar = 20000; //10 seconds
+	private long timerVar = 10000; //10 seconds
 	private long timeout;
 	private ArrayList<String> neighborTable;
 
@@ -54,7 +54,7 @@ public class sendingDVThread implements Runnable {
 	//must send dv update to all neighbors
 	public void sendDVUpdate(){
 
-		System.out.println("Router " + this.ipAddress+":"+this.portNumber+ " is sending DV update to neighbors");
+		//System.out.println("Router " + this.ipAddress+":"+this.portNumber+ " is sending DV update to neighbors");
  		// fetch the routers neighbor table
 		ArrayList<String> neighborTable = this.instanceRouter.getNeighborTable();
 
@@ -160,13 +160,10 @@ public class sendingDVThread implements Runnable {
 
 			   		if(instanceRouter.getRouterDVUpdates(currentKey) == 0)
 			   		{
-			   			instanceRouter.dropNeighbor(currentKey);
+			   			boolean changed = instanceRouter.dropNeighbor(currentKey);
 			   			System.out.println("Neighbor " + currentKey + " dropped");
-
-			   		if(dvUpdatesReceived.get(currentKey) == 0){
-			   			//drop neighbor
-			   		}
-			   }
+			   			sendDVUpdate();
+			        }
 			}
 		}
     }

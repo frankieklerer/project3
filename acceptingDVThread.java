@@ -54,14 +54,14 @@ public class acceptingDVThread implements Runnable{
 				System.out.println("Router " + this.routerKey +  " has received message " + incomingMessage);
 			
 				boolean changed = this.parsePacket(incomingMessage);
-				System.out.println("new dv calculated: ");
-				ArrayList<String> toPrintDV = instanceRouter.toStringforAmirsPrints();
-				for(int i = 0; i < toPrintDV.size(); i++){
-				  	System.out.println(toPrintDV.get(i));
-				}
+				
 				// if the message received changes the distance vector
 				if(changed){
-					
+					System.out.println("new dv calculated: ");
+				    ArrayList<String> toPrintDV = instanceRouter.toStringforAmirsPrints();
+				    for(int i = 0; i < toPrintDV.size(); i++){
+				     	System.out.println(toPrintDV.get(i));
+				    }
 					// for every neighbor
 					ArrayList<String> neighborTable = instanceRouter.getNeighborTable();
 
@@ -188,9 +188,18 @@ public class acceptingDVThread implements Runnable{
 					neighborDV.put(destKey,cost);
 					// check if THIS router has made any changes to its DV update as a result of the received DV update
 					// if true, must send its DV update to neighbors
-					changes = instanceRouter.checkDVforChanges(sourceKey, destKey, cost);
+					boolean checkchange = instanceRouter.checkDVforChanges(sourceKey, destKey, cost);
+					if(changes)
+					{
+						//already true
+					}
+					else if(checkchange){
+						changes = true;
+					}
 				}
 				instanceRouter.addNeighborDV(sourceKey, neighborDV);
+
+            
 			}
 
 			
@@ -204,19 +213,18 @@ public class acceptingDVThread implements Runnable{
 			String destKey = changeInfo[2] + ":" + changeInfo[3];
 			Integer newcost = Integer.parseInt(changeInfo[4].trim());
 
-			System.out.println("new weight update to neighbor " + sourceKey + " to " + destKey + " of " + newcost );
+			System.out.println("new weight update from neighbor " + sourceKey + " to " + destKey + " of " + newcost );
 			if(destKey.equals(instanceRouter.getRouterKey()))
 			{
 
 			System.out.println("new weight update from neighbor " + sourceKey + " to " + destKey + " of " + newcost );
 			
-			if(destKey.equals(instanceRouter.getRouterKey())){
 				changes = instanceRouter.updateCost(sourceKey, newcost);
 			}else{
-				changes = instanceRouter.updateCost(destKey, newcost);
+				changes = instanceRouter.updateCostToFrom(sourceKey, destKey, newcost);
 			}
 		  }
-		}
+		
 		return changes;
 	}
 }

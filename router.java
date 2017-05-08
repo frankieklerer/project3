@@ -100,11 +100,11 @@ public class router {
 
    
 	// method that updates the cost between two nodes
-	 public boolean updateCost(String dstKey, int newWeight){   
+	 public boolean updateCost(String dstKey, int neww){   
 
 	 			 // turns to true if cost if new in distance vector
 	       boolean change = false;
-
+         Integer newWeight = new Integer(neww);
           // source node and its distance vector
          HashMap<String, Integer> currentRouterDV = distanceVector.get(this.routerKey);
 
@@ -146,7 +146,7 @@ public class router {
             String destKey = currentToNodeList.get(i);
             String forwardthruKey = forwardingTable.get(destKey);
             int costToForwardKey = currentRouterDV.get(forwardthruKey);
-           // System.out.println("CHECKING for changes from " + destKey + " if uses " + toKey + " as its forwarding key (" + forwardthruKey + ") look for new routes");
+          //  System.out.println("CHECKING for changes from " + destKey + " if uses " + toKey + " as its forwarding key (" + forwardthruKey + ") look for new routes");
             if(destKey.equals(this.routerKey)){
               continue;
             } else if(destKey.equals(toKey)){
@@ -183,6 +183,65 @@ public class router {
               System.out.println(toPrintDV.get(i));        
           }
 	     return change;
+   }
+
+   // method that updates the cost between two nodes
+   public boolean updateCostToFrom(String srckey, String dstKey, int neww){   
+
+         // turns to true if cost if new in distance vector
+         boolean change = false;
+         Integer newWeight = new Integer(neww);
+          // source node and its distance vector
+         HashMap<String, Integer> currentRouterDV = distanceVector.get(this.routerKey);
+          
+         Integer costToSrc = currentRouterDV.get(srckey);
+          // gets all the destination nodes in its DV
+          Set<String> currentToNodes = currentRouterDV.keySet();
+          ArrayList<String> currentToNodeList = new ArrayList<String>(currentToNodes);
+          
+          for(int i = 0; i < currentToNodeList.size(); i++){
+
+            String currentKey = currentToNodeList.get(i);
+
+             if(currentKey.equals(this.routerKey)){
+              continue;
+            } else if(currentKey.equals(srckey)){
+              continue;
+            } else if(currentKey.equals(dstKey)){
+
+                Integer newCost = costToSrc + newWeight;
+
+                // update the distance vector of the router
+                currentRouterDV.put(dstKey, newCost);
+
+                // set this as true
+                change = true;
+
+                // update the routers forwarding table
+                forwardingTable.put(dstKey, srckey);
+            } else {
+                Integer tempw = new Integer(currentRouterDV.get(currentKey)-1);
+                Integer newCost = newWeight + tempw;
+               // System.out.println("TRYING to change weight to " + currentKey + " to new cost of " + newCost);
+                // update the distance vector of the router
+                currentRouterDV.put(currentKey, newCost);
+
+                // set this as true
+                change = true;
+
+                // update the routers forwarding table
+                forwardingTable.put(currentKey, srckey);
+            }
+                 
+            
+          }
+          change = true;
+          System.out.println("new dv calculated: ");
+          ArrayList<String> toPrintDV = this.toStringforAmirsPrints();
+          for(int i = 0; i < toPrintDV.size(); i++){
+              System.out.println(toPrintDV.get(i));        
+          }
+       return change;
    }
 
    // method that changes a current routers distance vector after receiving a neighboyrs distance vector
@@ -242,7 +301,7 @@ public class router {
 
           // update forwardng table
           forwardingTable.put(destKey, sourceKey);
-          System.out.println("ROUTER " + this.ipAddress + ":" + this.portNumber + " has changed its route to " + destKey);
+         // System.out.println("ROUTER " + this.ipAddress + ":" + this.portNumber + " has changed its route to " + destKey);
           
           //check other nodes to see if update helps
           int leastCostPath = totalNewWeight;
@@ -346,8 +405,12 @@ public class router {
     boolean returnVal = false;
 
     // get the from nodes distance vector
-    HashMap<String, Integer> tempDV = distanceVector.get(sourceKey);
-
+   
+    if(distanceVector.get(sourceKey) == null)
+    {
+      return false;
+    }
+     HashMap<String, Integer> tempDV = distanceVector.get(sourceKey);
     // where the node goes
     Set<String> toNodeSet = tempDV.keySet();
     ArrayList<String> toNodes = new ArrayList<String>(toNodeSet);
@@ -365,7 +428,7 @@ public class router {
 
   // returns the ip address and port number of the node that gives a shorter path by routing through it
   public ArrayList<String> possibleLeastCostPath(String sourceKey, String destKey, String currentForwardKey){
-   System.out.println("BEFORE: Router " + sourceKey + " routes thru " + currentForwardKey + " to get to " + destKey);
+  // System.out.println("BEFORE: Router " + sourceKey + " routes thru " + currentForwardKey + " to get to " + destKey);
 
 	 HashMap<String, Integer> sourceDV = distanceVector.get(sourceKey);
 	 Set<String> toNodeSet = sourceDV.keySet();
@@ -378,7 +441,7 @@ public class router {
 
 	 	// get its key
 	 	String toNodeKey = toNodes.get(i);
-	  System.out.println("current to node key " + toNodeKey);
+	 // System.out.println("current to node key " + toNodeKey);
 
 	  // if the possible forward key is the current key or the current forward key, do nothing
 	  if(toNodeKey.equals(this.routerKey)){
@@ -407,7 +470,7 @@ public class router {
     ArrayList<String> returnList = new ArrayList<String>();
     returnList.add(finalForwardKey);
     returnList.add(String.valueOf(finalCost));
-    System.out.println("AFTER: Router " + sourceKey + " will route thru " + finalForwardKey + " to get to " + destKey);
+ //   System.out.println("AFTER: Router " + sourceKey + " will route thru " + finalForwardKey + " to get to " + destKey);
     return returnList;
   }
 
@@ -532,8 +595,9 @@ public class router {
         return nodeArray;
     }
 
-   public void dropNeighbor(String neighborKey)
+   public boolean dropNeighbor(String neighborKey)
    {
+
        // gets all the destination nodes in its DV
       HashMap<String, Integer> currentRouterDV = distanceVector.get(routerKey);
 
@@ -545,7 +609,8 @@ public class router {
       ArrayList<String> currentToNodeList = new ArrayList<String>(currentToNodes);
       
       for(int i = 0; i < currentToNodeList.size(); i++){
-
+        int t = 1000;
+        Integer totalPossCost = new Integer(t);
         String destKey = currentToNodeList.get(i);
         String forwardthruKey = forwardingTable.get(destKey);
         if(forwardthruKey.equals(neighborKey))
@@ -557,18 +622,34 @@ public class router {
             {
               Integer costToNeighbor = currentRouterDV.get(tempNeighborKey);
               Integer costToNode = routeCostAtoB(tempNeighborKey,destKey);
-            //  Integer totalCost = costToNeighbor + 
+              Integer tempweight = costToNeighbor + costToNode;
+              if(tempweight < totalPossCost)
+              {
+                totalPossCost = costToNeighbor + costToNode;
+                currentRouterDV.put(destKey, totalPossCost);
+                forwardingTable.put(destKey, tempNeighborKey);
+              }
             }
-          }
+          } 
         }
       }
       
-
+      distanceVector.put(this.routerKey, currentRouterDV);
+      return true;
    }
    public Integer getRouterDVUpdates(String fromKey)
    {
+    if(neighborTable.contains(fromKey))
+    {
      Integer updates = dvUpdatesReceived.get(fromKey);
      return updates;
+    }
+    else
+    {
+      int i = 0;
+      Integer toreturn = new Integer(i);
+      return toreturn;
+    }
    }
 
    public HashMap<String,Integer> getDVUpdatesReceived()
@@ -578,7 +659,10 @@ public class router {
 	
    public void dvUpdateReceived(String fromKey)
    {
+    if(neighborTable.contains(fromKey))
+    {
       Integer current = new Integer(dvUpdatesReceived.get(fromKey) + 1);
       dvUpdatesReceived.put(fromKey,current);
+    }
    }
 }
